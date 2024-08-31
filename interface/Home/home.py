@@ -1,5 +1,5 @@
 from Profile.profile import UserProfile
-from Chat.chat import Chats
+from Chat.chat_list import ChatList
 import flet as ft
 
 
@@ -22,7 +22,7 @@ class Home(ft.View):
         if index == 0:
             content = HomePage()
         elif index == 1:
-            content = Chats()
+            content = ChatList()
         elif index == 2:
             content = UserProfile()
         self.show_content(content)

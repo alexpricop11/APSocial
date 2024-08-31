@@ -27,7 +27,7 @@ class ChatRoomView(APIView):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 @authentication_classes([JSONWebTokenAuthentication])
-async def chat_message(request, chat_id):
+def chat_message(request, chat_id):
     user = request.user
     chat_room = ChatRoom.objects.filter(users=user, id=chat_id).first()
     if chat_room is None:
