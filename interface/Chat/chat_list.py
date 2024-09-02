@@ -1,12 +1,12 @@
 import flet as ft
 from Chat.chat_room import ChatRoom
-from api.api_client import APIClient
+from api.api_chat import APIChat
 
 
 class ChatList(ft.UserControl):
     def __init__(self):
         super().__init__()
-        self.api = APIClient()
+        self.api = APIChat()
         self.token = None
         self.chats = []
 
@@ -64,7 +64,7 @@ class ChatList(ft.UserControl):
                 ft.CupertinoActionSheetAction(
                     content=ft.Text("Șterge"),
                     is_destructive_action=True,
-                    on_click=self.delete_chat(chat_id),
+                    on_click=lambda e: self.delete_chat(chat_id),
                 ),
             ],
         )
@@ -74,7 +74,18 @@ class ChatList(ft.UserControl):
         self.page.update()
 
     def delete_chat(self, chat_id):
-        print(f'delete: {chat_id}')
+        response = self.api.delete_chat(self.token, chat_id)
+        if response.status_code == 200:
+            self.page.snack_bar = ft.SnackBar(ft.Text('Chat-ul a fost șters'), bgcolor='green')
+            self.page.snack_bar.open = True
+            self.page.dialog.open = False
+            self.get_chats()
+            self.update()
+        else:
+            self.page.snack_bar = ft.SnackBar(ft.Text('Eroare la șterge'), bgcolor='red')
+            self.page.snack_bar.open = True
+            self.page.dialog.open = False
+        self.page.update()
 
     def build(self):
         self.get_token()

@@ -41,15 +41,3 @@ class APIClient:
         url = f'{self.BASE_URL}/verify-code'
         response = requests.post(url, data=data)
         return response
-
-    def chat_room(self, token):
-        url = f'{self.BASE_URL}/chat-room'
-        headers = {'Authorization': f'Bearer {token}'}
-        response = requests.get(url, headers=headers)
-        return response
-
-    def chat_message(self, token, chat_id):
-        url = f'{self.BASE_URL}/chat-message/{chat_id}/'
-        headers = {'Authorization': f'Bearer {token}'}
-        response = requests.get(url, headers=headers)
-        return response

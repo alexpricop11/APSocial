@@ -29,9 +29,20 @@ class ChatRoomView(APIView):
 @authentication_classes([JSONWebTokenAuthentication])
 def chat_message(request, chat_id):
     user = request.user
-    chat_room = ChatRoom.objects.filter(users=user, id=chat_id).first()
+    chat_room = ChatRoom.objects.get(users=user, id=chat_id)
     if chat_room is None:
         return Response({'error': 'Chat room not found'}, status=status.HTTP_404_NOT_FOUND)
     chat_messages = ChatMessage.objects.filter(chat_room=chat_room)
     serializer = ChatMessageSerializer(chat_messages, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+@authentication_classes([JSONWebTokenAuthentication])
+def delete_chat(request, chat_id):
+    chat_room = ChatRoom.objects.get(users=request.user, id=chat_id)
+    if chat_room:
+        chat_room.delete()
+        return Response({'message': 'The chat has been deleted'}, status=status.HTTP_200_OK)
+    return Response({'message': 'Not found'}, status=status.HTTP_404_NOT_FOUND)
