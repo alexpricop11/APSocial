@@ -1,4 +1,4 @@
-from .models import ChatRoom, ChatMessage
+from .models import ChatRoom, ChatMessage, UserChatName
 
 from rest_framework import serializers
 
@@ -51,3 +51,9 @@ class ChatMessageSerializer(serializers.ModelSerializer):
     @staticmethod
     def get_sender(obj: ChatMessage):
         return obj.sender.username
+
+
+class EditChatNameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserChatName
+        fields = ['custom_name']

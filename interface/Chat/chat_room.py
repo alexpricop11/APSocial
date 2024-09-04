@@ -30,7 +30,7 @@ class ChatRoom(ft.UserControl):
         response = self.api.chat_message(self.token, self.room_id)
         if response.status_code == 200:
             data = response.json()
-            self.chat_name = data[0]['chat_room']
+            self.chat_name = data[0].get('custom_name') or data[0]['chat_room']
             self.messages = data
         else:
             print('Error fetching chat name')
@@ -53,9 +53,44 @@ class ChatRoom(ft.UserControl):
     def handle_disconnect(self, e):
         asyncio.create_task(self.disconnect())
 
+    def go_back(self, e):
+        self.page.views.pop()
+        self.page.update()
+
+    def close_dialog(self):
+        if self.page.dialog:
+            self.page.dialog.open = False
+            self.page.update()
+
+    def toggle_info(self, e):
+        self.page.dialog = ft.AlertDialog(
+            title=ft.Text("Editare Nume Chat"),
+            content=ft.TextField(label="Numele nou al chat-ului", value=self.chat_name),
+            actions=[
+                ft.TextButton("Salvează", on_click=self.on_save_name),
+                ft.TextButton("Anulează", on_click=self.close_dialog())
+            ]
+        )
+        self.page.dialog.open = True
+        self.page.update()
+
+    def on_save_name(self, e):
+        new_name = self.page.dialog.controls.value
+        asyncio.create_task(self.edit_chat_name(new_name))
+        self.page.dialog.open = False
+        self.page.update()
+
+    async def edit_chat_name(self, new_name):
+        response = await self.api.edit_chat_name(self.token, self.room_id, new_name)
+        if response.status_code == 200:
+            self.chat_name = new_name
+            self.update()
+        else:
+            print('Eroare la actualizarea numelui chat-ului')
+
     def build(self):
         self.get_chat_message()
-        back_button = ft.IconButton(icon=ft.icons.ARROW_BACK, on_click=None)
+        back_button = ft.IconButton(icon=ft.icons.ARROW_BACK, on_click=self.go_back)
         info_chat = ft.IconButton(icon=ft.icons.INFO, on_click=None)
         top_bar = ft.Row([
             back_button,

@@ -6,8 +6,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 
-from .models import ChatRoom, ChatMessage
-from .serializers import ChatRoomSerializer, ChatMessageSerializer
+from .models import ChatRoom, ChatMessage, UserChatName
+from .serializers import ChatRoomSerializer, ChatMessageSerializer, EditChatNameSerializer
 
 
 class ChatRoomView(APIView):
@@ -45,3 +45,16 @@ def delete_chat(request, chat_id):
         chat_room.delete()
         return Response({'message': 'The chat has been deleted'}, status=status.HTTP_200_OK)
     return Response({'message': 'Not found'}, status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+@authentication_classes([JSONWebTokenAuthentication])
+def edit_chat_name(request, chat_id):
+    chat_room = ChatRoom.objects.get(id=chat_id)
+    custom_name, created = UserChatName.objects.get_or_create(users=request.user, chat_room=chat_room)
+    serializer = EditChatNameSerializer(custom_name, data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -8,6 +8,15 @@ class ChatRoom(models.Model):
     created = models.DateTimeField(auto_now_add=True)
 
 
+class UserChatName(models.Model):
+    users = models.ForeignKey(Users, on_delete=models.CASCADE)
+    chat_room = models.ForeignKey(ChatRoom, on_delete=models.CASCADE)
+    custom_name = models.CharField(max_length=35, blank=True, null=True)
+
+    class Meta:
+        unique_together = ('users', 'chat_room')
+
+
 class ChatMessage(models.Model):
     chat_room = models.ForeignKey(ChatRoom, on_delete=models.CASCADE)
     sender = models.ForeignKey(Users, on_delete=models.CASCADE)
