@@ -28,11 +28,10 @@ class ChatRoomView(APIView):
 @permission_classes([IsAuthenticated])
 @authentication_classes([JSONWebTokenAuthentication])
 def chat_message(request, chat_id):
-    user = request.user
-    chat_room = ChatRoom.objects.get(users=user, id=chat_id)
+    chat_room = ChatRoom.objects.get(users=request.user, id=chat_id)
     if chat_room is None:
         return Response({'error': 'Chat room not found'}, status=status.HTTP_404_NOT_FOUND)
-    chat_messages = ChatMessage.objects.filter(chat_room=chat_room)
+    chat_messages = ChatMessage.objects.filter(chat_room=chat_room).order_by('date')
     serializer = ChatMessageSerializer(chat_messages, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 

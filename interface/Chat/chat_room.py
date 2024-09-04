@@ -3,13 +3,14 @@ import json
 
 import flet as ft
 import websockets
-from api.api_client import APIClient
+
+from api.api_chat import APIChat
 
 
 class ChatRoom(ft.UserControl):
     def __init__(self, room_id, token):
         super().__init__()
-        self.api = APIClient()
+        self.api = APIChat()
         self.room_id = room_id
         self.token = token
         self.socket = None
@@ -25,24 +26,20 @@ class ChatRoom(ft.UserControl):
         except Exception as ex:
             print(ex)
 
-    async def get_chat_name(self):
+    def get_chat_message(self):
         response = self.api.chat_message(self.token, self.room_id)
         if response.status_code == 200:
             data = response.json()
-            if isinstance(data, list) and len(data) > 0:
-                chat = data[0]
-            else:
-                chat = {}
-            self.chat_name = chat.get('name', 'Unknown')
+            self.chat_name = data[0]['chat_room']
+            self.messages = data
         else:
-            self.chat_name = 'Error fetching chat name'
-        self.page.update()
+            print('Error fetching chat name')
 
     async def receive_messages(self):
         async for message in self.socket:
             data = json.loads(message)
             self.messages.append(data)
-            self.page.update()
+            self.update()
 
     async def send_message(self, message):
         if self.socket:
@@ -56,19 +53,23 @@ class ChatRoom(ft.UserControl):
     def handle_disconnect(self, e):
         asyncio.create_task(self.disconnect())
 
-    async def init_chat(self):
-        await self.get_chat_name()
-        await self.connect()
-
     def build(self):
-        back_button = ft.IconButton(icon=ft.icons.ARROW_BACK)
-        info_chat = ft.IconButton(icon=ft.icons.INFO)
-        chat_name = ft.Text(self.chat_name, size=24, weight=ft.FontWeight.BOLD, color=ft.colors.WHITE, expand=True,
-                            text_align=ft.TextAlign.CENTER)
-        return ft.SafeArea(
-            ft.Row([
-                back_button,
-                chat_name,
-                info_chat
-            ])
+        self.get_chat_message()
+        back_button = ft.IconButton(icon=ft.icons.ARROW_BACK, on_click=None)
+        info_chat = ft.IconButton(icon=ft.icons.INFO, on_click=None)
+        top_bar = ft.Row([
+            back_button,
+            ft.Text(self.chat_name, text_align=ft.TextAlign.CENTER, expand=True, size=24,
+                    color=ft.colors.random_color()),
+            info_chat
+        ])
+
+        messages = ft.Column(
+            controls=[ft.Text(f"{msg['message']}") for msg in self.messages]
         )
+        input_send_message = ft.Container(content=ft.Row([
+            ft.TextField(label="Scrie un mesaj...", height=40, width=250, expand=True),
+            ft.IconButton(icon=ft.icons.SEND, on_click=None)
+        ]), alignment=ft.alignment.bottom_center)
+
+        return ft.SafeArea(ft.Column([top_bar, messages, input_send_message]))

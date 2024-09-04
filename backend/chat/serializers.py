@@ -37,6 +37,17 @@ class LastMessageSerializer(serializers.ModelSerializer):
 
 
 class ChatMessageSerializer(serializers.ModelSerializer):
+    chat_room = serializers.SerializerMethodField()
+    sender = serializers.SerializerMethodField()
+
     class Meta:
         model = ChatMessage
-        fields = ['id', 'chat_room', 'sender', 'message', 'date', 'seen']
+        fields = 'id', 'chat_room', 'sender', 'message', 'date', 'seen'
+
+    @staticmethod
+    def get_chat_room(obj: ChatMessage):
+        return obj.chat_room.name
+
+    @staticmethod
+    def get_sender(obj: ChatMessage):
+        return obj.sender.username
