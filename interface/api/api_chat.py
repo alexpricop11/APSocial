@@ -22,8 +22,8 @@ class APIChat:
         response = requests.delete(url, headers=headers)
         return response
 
-    def edit_chat_name(self, token, chat_id, new_name):
+    def edit_chat_name(self, token, chat_id, data):
         url = f'{self.BASE_URL}/edit-chat-name/{chat_id}/'
         headers = {'Authorization': f'Bearer {token}'}
-        response = requests.put(url, headers=headers, custom_name=new_name)
+        response = requests.put(url, headers=headers, data=data)
         return response
