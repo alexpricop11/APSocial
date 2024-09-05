@@ -12,7 +12,10 @@ class Login(ft.UserControl):
         self.login_button = ft.OutlinedButton(text='Login', width=200, on_click=self.login, disabled=True)
 
     def login(self, e):
-        data = {'username': self.username.value, 'password': self.user_pass.value}
+        data = {
+            'username': self.username.value.strip(),
+            'password': self.user_pass.value.strip()
+        }
         response = self.api_client.login(data)
         if response.status_code == 200:
             token = response.json().get("token")

@@ -19,8 +19,8 @@ class Register(ft.UserControl):
 
     def register(self, e):
         data = {
-            'username': self.username.value,
-            'password': self.user_pass.value,
+            'username': self.username.value.strip(),
+            'password': self.user_pass.value.strip(),
             'email': self.user_email.value,
             'phone_number': self.phone_number.value,
             'birthday': self.birthday.value
