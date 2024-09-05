@@ -1,21 +1,33 @@
 version: '3.9'
 
 services:
-  db:
-    image: postgres:15
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    environment:
-      POSTGRES_DB: apsocial
-      POSTGRES_USER: socialuser
-      POSTGRES_PASSWORD: socialpass
-    ports:
-      - "5432:5432"
+   db:
+     image: postgres:13
+     volumes:
+       - postgres_data:/var/lib/postgresql/data
+     environment:
+       POSTGRES_DB: apsocial
+       POSTGRES_USER: 123456
+       POSTGRES_PASSWORD: socialpass
+     ports:
+       - "5432:5432"
 
-  redis:
-    image: redis
-    ports:
-      - "6379:6379"
+   redis:
+     image: redis
+     ports:
+       - "6379:6379"
+
+   web:
+     build: .
+     command: python manage.py runserver 0.0.0.0:8000
+     volumes:
+       - .:/app
+     ports:
+       - "8000:8000"
+     depends_on:
+       - db
+     environment:
+       - DATABASE_URL=postgresql://socialuser:socialpass@db:5432/apsocial
 
 volumes:
-  postgres_data:
+   postgres_data:

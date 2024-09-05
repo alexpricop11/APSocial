@@ -29,23 +29,13 @@ class ChatList(ft.UserControl):
             self.page.go('/auth')
 
     def chat_list(self):
-        chat_list = []
-        for chat in self.chats:
-            chat_list.append(
-                ft.ListTile(
-                    leading=ft.Icon(
-                        ft.icons.PERSON,
-                        size=38,
-                        color=ft.colors.WHITE
-                    ),
-                    title=ft.Text(chat.get('name'), size=20, weight=ft.FontWeight.BOLD, color=ft.colors.WHITE),
-                    subtitle=ft.Text(
-                        chat.get('last_message', ''),
-                        size=14,
-                        color=ft.colors.GREY_500
-                    ),
-                    on_long_press=lambda e, chat_id=chat['id']: self.show_menu(chat_id, chat.get('name')),
-                    on_click=lambda e, chat_id=chat['id']: self.open_chat(chat_id)))
+        chat_list = [
+            ft.ListTile(
+                leading=ft.Icon(ft.icons.PERSON, size=38, color=ft.colors.WHITE),
+                title=ft.Text(chat.get('name'), size=20, weight=ft.FontWeight.BOLD, color=ft.colors.WHITE),
+                subtitle=ft.Text(chat.get('last_message', ''), size=14, color=ft.colors.GREY_500),
+                on_long_press=lambda e, chat_id=chat['id']: self.show_menu(chat_id, chat.get('name')),
+                on_click=lambda e, chat_id=chat['id']: self.open_chat(chat_id)) for chat in self.chats]
         self.chat_list_view = ft.ListView(controls=chat_list)
         return self.chat_list_view
 
@@ -55,7 +45,7 @@ class ChatList(ft.UserControl):
         self.page.views.append(chat_room)
         self.page.update()
 
-    def handle_click(self, e):
+    def close_dialog(self, e=None):
         self.page.dialog.open = False
         self.page.update()
 
@@ -65,13 +55,13 @@ class ChatList(ft.UserControl):
             message=ft.Row([ft.Text(f"Opțiuni pentru chat: {chat_name}")], alignment=ft.MainAxisAlignment.CENTER),
             cancel=ft.CupertinoActionSheetAction(
                 content=ft.Text("Cancel"),
-                on_click=self.handle_click,
+                on_click=self.close_dialog,
             ),
             actions=[
                 ft.CupertinoActionSheetAction(
                     content=ft.Text("Șterge"),
                     is_destructive_action=True,
-                    on_click=lambda e: self.delete_chat(chat_id),
+                    on_click=lambda _: self.show_delete_confirmation(chat_id, chat_name)
                 ),
             ],
         )
@@ -80,36 +70,38 @@ class ChatList(ft.UserControl):
         self.page.dialog.open = True
         self.page.update()
 
+    def show_delete_confirmation(self, chat_id, chat_name):
+        dialog = ft.CupertinoAlertDialog(
+            title=ft.Text("Confirmare Ștergere"),
+            content=ft.Text(f"Sunteți sigur că doriți să ștergeți chatul cu {chat_name}?"),
+            actions=[
+                ft.CupertinoDialogAction(
+                    text="Anulează",
+                    on_click=self.close_dialog
+                ),
+                ft.CupertinoDialogAction(
+                    text="Confirmă",
+                    is_destructive_action=True,
+                    on_click=lambda _: self.delete_chat(chat_id)
+                ),
+            ]
+        )
+        self.page.dialog = dialog
+        self.page.dialog.open = True
+        self.page.update()
+
     def delete_chat(self, chat_id):
         response = self.api.delete_chat(self.token, chat_id)
         if response.status_code == 200:
-            self.chats = [chat for chat in self.chats if chat['id'] != chat_id]
-            self.chat_list_view.controls.clear()
-            self.chat_list_view.controls.extend([
-                ft.ListTile(
-                    leading=ft.Icon(
-                        ft.icons.PERSON,
-                        size=38,
-                        color=ft.colors.WHITE if False else ft.colors.GREEN
-                    ),
-                    title=ft.Text(chat.get('name'), size=20, weight=ft.FontWeight.BOLD, color=ft.colors.WHITE),
-                    subtitle=ft.Text(
-                        chat.get('last_message', ''),
-                        size=14,
-                        color=ft.colors.GREY_500
-                    ),
-                    on_long_press=lambda e, chat_id=chat['id']: self.show_menu(chat_id, chat.get('name')),
-                    on_click=None)
-                for chat in self.chats
-            ])
-            self.page.snack_bar = ft.SnackBar(ft.Text('Chat-ul a fost șters'), bgcolor='green')
-            self.page.snack_bar.open = True
-            self.page.dialog.open = False
-            self.update()
+            self.chat_list()
+            self.show_snackbar('Chat-ul a fost șters', 'green')
         else:
-            self.page.snack_bar = ft.SnackBar(ft.Text('Eroare la ștergere'), bgcolor='red')
-            self.page.snack_bar.open = True
-            self.page.dialog.open = False
+            self.show_snackbar('Eroare la ștergere', 'red')
+        self.close_dialog()
+
+    def show_snackbar(self, message, bgcolor):
+        self.page.snack_bar = ft.SnackBar(ft.Text(message), bgcolor=bgcolor)
+        self.page.snack_bar.open = True
         self.page.update()
 
     def build(self):

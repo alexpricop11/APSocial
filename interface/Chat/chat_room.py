@@ -1,10 +1,9 @@
 import asyncio
 import json
-
 import flet as ft
 import websockets
-
 from api.api_chat import APIChat
+from .info_menu import InfoMenu
 
 
 class ChatRoom(ft.UserControl):
@@ -57,41 +56,14 @@ class ChatRoom(ft.UserControl):
         self.page.views.pop()
         self.page.update()
 
-    def close_dialog(self):
-        if self.page.dialog:
-            self.page.dialog.open = False
-            self.page.update()
-
-    def toggle_info(self, e):
-        self.page.dialog = ft.AlertDialog(
-            title=ft.Text("Editare Nume Chat"),
-            content=ft.TextField(label="Numele nou al chat-ului", value=self.chat_name),
-            actions=[
-                ft.TextButton("Salvează", on_click=self.on_save_name),
-                ft.TextButton("Anulează", on_click=self.close_dialog())
-            ]
-        )
-        self.page.dialog.open = True
+    def info_menu(self, e):
+        self.page.views.append(InfoMenu(self.token, self.room_id, self.chat_name))
         self.page.update()
-
-    def on_save_name(self, e):
-        new_name = self.page.dialog.controls.value
-        asyncio.create_task(self.edit_chat_name(new_name))
-        self.page.dialog.open = False
-        self.page.update()
-
-    async def edit_chat_name(self, new_name):
-        response = await self.api.edit_chat_name(self.token, self.room_id, new_name)
-        if response.status_code == 200:
-            self.chat_name = new_name
-            self.update()
-        else:
-            print('Eroare la actualizarea numelui chat-ului')
 
     def build(self):
         self.get_chat_message()
         back_button = ft.IconButton(icon=ft.icons.ARROW_BACK, on_click=self.go_back)
-        info_chat = ft.IconButton(icon=ft.icons.INFO, on_click=None)
+        info_chat = ft.IconButton(icon=ft.icons.INFO, on_click=self.info_menu)
         top_bar = ft.Row([
             back_button,
             ft.Text(self.chat_name, text_align=ft.TextAlign.CENTER, expand=True, size=24,
@@ -103,7 +75,7 @@ class ChatRoom(ft.UserControl):
             controls=[ft.Text(f"{msg['message']}") for msg in self.messages]
         )
         input_send_message = ft.Container(content=ft.Row([
-            ft.TextField(label="Scrie un mesaj...", height=40, width=250, expand=True),
+            ft.TextField(label="Scrie un mesaj...", expand=True),
             ft.IconButton(icon=ft.icons.SEND, on_click=None)
         ]), alignment=ft.alignment.bottom_center)
 
