@@ -32,7 +32,7 @@ def chat_message(request, chat_id):
     if chat_room is None:
         return Response({'error': 'Chat room not found'}, status=status.HTTP_404_NOT_FOUND)
     chat_messages = ChatMessage.objects.filter(chat_room=chat_room).order_by('date')
-    serializer = ChatMessageSerializer(chat_messages, many=True)
+    serializer = ChatMessageSerializer(chat_messages, many=True, context={'request': request})
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 

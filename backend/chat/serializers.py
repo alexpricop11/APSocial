@@ -21,13 +21,14 @@ class ChatRoomSerializer(serializers.ModelSerializer):
         last_message = ChatMessage.objects.filter(chat_room=obj).latest('date')
         return LastMessageSerializer(last_message).data.get('message')
 
-    def get_name(self, obj):
-        current_user = self.context['request'].user
-        name_chat = [user for user in obj.users.all() if user != current_user]
-        if name_chat:
-            return ", ".join([user.username for user in name_chat])
-        else:
-            return ""
+    def get_name(self, chat: ChatRoom):
+        user = self.context['request'].user
+        chat_name = chat
+        try:
+            user_chat_name = UserChatName.objects.get(users=user, chat_room=chat_name)
+            return user_chat_name.custom_name if user_chat_name.custom_name else chat_name
+        except UserChatName.DoesNotExist:
+            return chat_name
 
 
 class LastMessageSerializer(serializers.ModelSerializer):
@@ -44,9 +45,14 @@ class ChatMessageSerializer(serializers.ModelSerializer):
         model = ChatMessage
         fields = 'id', 'chat_room', 'sender', 'message', 'date', 'seen'
 
-    @staticmethod
-    def get_chat_room(obj: ChatMessage):
-        return obj.chat_room.name
+    def get_chat_room(self, obj):
+        user = self.context['request'].user
+        chat_room = obj.chat_room
+        try:
+            user_chat_name = UserChatName.objects.get(users=user, chat_room=chat_room)
+            return user_chat_name.custom_name if user_chat_name.custom_name else chat_room.name
+        except UserChatName.DoesNotExist:
+            return chat_room.name
 
     @staticmethod
     def get_sender(obj: ChatMessage):

@@ -27,3 +27,9 @@ class APIChat:
         headers = {'Authorization': f'Bearer {token}'}
         response = requests.put(url, headers=headers, data=data)
         return response
+
+    def block_user(self, token, data):
+        url = f'{self.BASE_URL}/block-user'
+        headers = {'Authorization': f'Bearer {token}'}
+        response = requests.post(url, headers=headers, data=data)
+        return response

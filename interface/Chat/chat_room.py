@@ -70,7 +70,6 @@ class ChatRoom(ft.UserControl):
                     color=ft.colors.random_color()),
             info_chat
         ])
-
         messages = ft.Column(
             controls=[ft.Text(f"{msg['message']}") for msg in self.messages]
         )

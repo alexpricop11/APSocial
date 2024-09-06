@@ -38,9 +38,12 @@ class Users(AbstractBaseUser, PermissionsMixin):
     created_at = models.DateTimeField(auto_now_add=True)
     reset_code = models.CharField(max_length=10, blank=True, null=True)
     reset_code_expiry = models.DateTimeField(blank=True, null=True)
+    block_user = models.ManyToManyField('self', symmetrical=False, related_name='blocked_by', blank=True)
+
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
+
     objects = UserManager()
 
     USERNAME_FIELD = 'username'
