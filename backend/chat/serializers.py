@@ -23,12 +23,11 @@ class ChatRoomSerializer(serializers.ModelSerializer):
 
     def get_name(self, chat: ChatRoom):
         user = self.context['request'].user
-        chat_name = chat
         try:
-            user_chat_name = UserChatName.objects.get(users=user, chat_room=chat_name)
-            return user_chat_name.custom_name if user_chat_name.custom_name else chat_name
+            user_chat_name = UserChatName.objects.get(users=user, chat_room=chat)
+            return user_chat_name.custom_name if user_chat_name.custom_name else chat.name
         except UserChatName.DoesNotExist:
-            return chat_name
+            return chat.name
 
 
 class LastMessageSerializer(serializers.ModelSerializer):
