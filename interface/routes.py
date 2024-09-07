@@ -1,6 +1,6 @@
 from Auth.reset_password import ResetPassword, VerifyCode
 from Auth.auth_page import AuthPage
-from Home.home import Home
+from Home.home_view import HomeView
 import flet as ft
 
 
@@ -14,7 +14,7 @@ def routes(page: ft.Page):
         elif page.route == '/verify-code':
             page.views.append(VerifyCode())
         elif page.route == '/home':
-            page.views.append(Home())
+            page.views.append(HomeView())
         page.update()
 
     page.on_route_change = route_change

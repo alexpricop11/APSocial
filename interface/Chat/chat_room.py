@@ -7,7 +7,7 @@ from .info_menu import InfoMenu
 
 
 class ChatRoom(ft.UserControl):
-    def __init__(self, room_id, token):
+    def __init__(self, room_id: int, token: str):
         super().__init__()
         self.api = APIChat()
         self.room_id = room_id
@@ -70,12 +70,26 @@ class ChatRoom(ft.UserControl):
                     color=ft.colors.random_color()),
             info_chat
         ])
-        messages = ft.Column(
-            controls=[ft.Text(f"{msg['message']}") for msg in self.messages]
+        messages = ft.ListView(
+            controls=[ft.Text(f"{msg['message']}") for msg in self.messages],
+            spacing=10,
+            auto_scroll=True,
         )
-        input_send_message = ft.Container(content=ft.Row([
-            ft.TextField(label="Scrie un mesaj...", expand=True),
+        input_send_message = ft.Row([
+            ft.TextField(
+                hint_text="Scrie un mesaj...",
+                expand=True,
+                autofocus=True,
+                shift_enter=True,
+                min_lines=1,
+                max_lines=5,
+                filled=True
+            ),
             ft.IconButton(icon=ft.icons.SEND, on_click=None)
-        ]), alignment=ft.alignment.bottom_center)
-
-        return ft.SafeArea(ft.Column([top_bar, messages, input_send_message]))
+        ])
+        return ft.SafeArea(ft.Column([
+            top_bar, messages, input_send_message
+        ],
+            alignment=ft.alignment.bottom_center,
+            horizontal_alignment=ft.CrossAxisAlignment.END
+        ))

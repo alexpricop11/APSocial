@@ -6,10 +6,9 @@ from api.api_chat import APIChat
 class ChatList(ft.UserControl):
     def __init__(self):
         super().__init__()
-        self.chat_list_view = None
         self.api = APIChat()
         self.token = None
-        self.chats = []
+        self.chats = None
 
     def get_token(self):
         self.token = self.page.client_storage.get("token")
@@ -24,7 +23,6 @@ class ChatList(ft.UserControl):
         response = self.api.chat_room(self.token)
         if response.status_code == 200:
             self.chats = response.json()
-            self.chat_list()
         else:
             self.page.go('/auth')
 
@@ -33,11 +31,30 @@ class ChatList(ft.UserControl):
             ft.ListTile(
                 leading=ft.Icon(ft.icons.PERSON, size=38, color=ft.colors.WHITE),
                 title=ft.Text(chat.get('name'), size=20, weight=ft.FontWeight.BOLD, color=ft.colors.WHITE),
-                subtitle=ft.Text(chat.get('last_message', ''), size=14, color=ft.colors.GREY_500),
+                subtitle=ft.Text(
+                    chat.get('last_message', '')[:20] + '...' if len(chat.get('last_message', '')) > 20 else chat.get(
+                        'last_message', ''),
+                    size=14,
+                    color=ft.colors.GREY_500),
                 on_long_press=lambda e, chat_id=chat['id']: self.show_menu(chat_id, chat.get('name')),
-                on_click=lambda e, chat_id=chat['id']: self.open_chat(chat_id)) for chat in self.chats]
-        self.chat_list_view = ft.ListView(controls=chat_list)
-        return self.chat_list_view
+                on_click=lambda e, chat_id=chat['id']: self.open_chat(chat_id)) for chat in self.chats
+        ]
+        return ft.Container(
+            ft.ListView(
+                controls=chat_list,
+                height=self.page.window.height - 52,
+            ),
+        )
+
+    def delete_chat(self, chat_id):
+        response = self.api.delete_chat(self.token, chat_id)
+        if response.status_code == 200:
+            self.get_chats()
+            self.show_snackbar('Chat-ul a fost șters', 'green')
+        else:
+            self.show_snackbar('Eroare la ștergere', 'red')
+        self.close_dialog()
+        self.page.update()
 
     def open_chat(self, chat_id):
         chat_room = ChatRoom(chat_id, self.token)
@@ -90,15 +107,6 @@ class ChatList(ft.UserControl):
         self.page.dialog.open = True
         self.page.update()
 
-    def delete_chat(self, chat_id):
-        response = self.api.delete_chat(self.token, chat_id)
-        if response.status_code == 200:
-            self.chat_list()
-            self.show_snackbar('Chat-ul a fost șters', 'green')
-        else:
-            self.show_snackbar('Eroare la ștergere', 'red')
-        self.close_dialog()
-
     def show_snackbar(self, message, bgcolor):
         self.page.snack_bar = ft.SnackBar(ft.Text(message), bgcolor=bgcolor)
         self.page.snack_bar.open = True
@@ -110,7 +118,5 @@ class ChatList(ft.UserControl):
             ft.Row(controls=[
                 ft.Text("CHAT", expand=True, text_align=ft.TextAlign.CENTER, size=24, color=ft.colors.GREEN),
                 ft.IconButton(icon=ft.icons.SEARCH, icon_color=ft.colors.GREY_50)
-            ]),
-            padding=10, margin=-10, bgcolor=ft.colors.BLACK)
-        chat_list = self.chat_list()
-        return ft.SafeArea(ft.Column([app_bar, chat_list]))
+            ]), padding=10, margin=-10, bgcolor=ft.colors.BLACK)
+        return ft.SafeArea(ft.Column([app_bar, self.chat_list()]))

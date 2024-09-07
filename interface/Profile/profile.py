@@ -35,7 +35,7 @@ class UserProfile(ft.UserControl):
         if response.status_code == 200:
             data = response.json()
             self.username = data.get('username')
-            self.birthday = self.format_date(data.get('birthday'))
+            self.birthday = self.format_date(data.get('birthday')) if data.get('birthday') else ''
             self.email = data.get('email')
             self.my_followers = data.get('my_followers')
             self.follow = data.get('follow')
@@ -66,8 +66,9 @@ class UserProfile(ft.UserControl):
                 self.close_dialog()
                 self.update()
             else:
-                result.controls.append(ft.Text(response.json().get('error')))
+                result.controls.append(ft.Text(response.json()))
             self.page.update()
+
         content = ft.Column([username_field, email_field, birthday_field,
                              ft.Row([
                                  ft.TextButton("Anulează", on_click=lambda _: self.close_dialog()),
@@ -154,14 +155,15 @@ class UserProfile(ft.UserControl):
         profile = ft.Text(f'{self.username}', size=24, weight=ft.FontWeight.BOLD, expand=True)
         follow_text = ft.Text(f"Te urmărește:\n {self.my_followers}", size=16, color=ft.colors.GREY)
         followed_by_text = ft.Text(f"Urmărești:\n {self.follow}", size=16, color=ft.colors.GREY)
-        user_birthday = ft.Text(f'Data de naștere: \n{self.birthday}', size=16)
         popup_menu_button = ft.PopupMenuButton(
             icon=ft.icons.MORE_VERT,
             items=[
                 ft.PopupMenuItem(text="Editează profil-ul", icon=ft.icons.DRAW, on_click=self.edit_profile),
                 ft.PopupMenuItem(text="Schimbă parola", icon=ft.icons.PASSWORD, on_click=self.change_password),
                 ft.PopupMenuItem(text="Schimbă tema", icon=ft.icons.BRIGHTNESS_6, on_click=self.change_theme),
-                ft.PopupMenuItem(text="Ieșire", icon=ft.icons.LOGOUT, on_click=self.logout)])
+                ft.PopupMenuItem(text="Ieșire", icon=ft.icons.LOGOUT, on_click=self.logout)
+            ]
+        )
         button = ft.Row(
             [profile, popup_menu_button],
             alignment=ft.MainAxisAlignment.CENTER,
@@ -171,8 +173,12 @@ class UserProfile(ft.UserControl):
             [follow_text, followed_by_text],
             alignment=ft.MainAxisAlignment.START,
             spacing=20)
+        elements = [button, user_info]
+        if self.birthday:
+            user_birthday = ft.Text(f'Data de naștere: \n{self.birthday}', size=16)
+            elements.append(user_birthday)
         user = ft.Column(
-            [button, user_info, user_birthday],
+            elements,
             alignment=ft.MainAxisAlignment.CENTER,
             spacing=15)
         return user

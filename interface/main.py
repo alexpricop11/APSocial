@@ -9,13 +9,10 @@ def main(page: ft.Page):
         saved_theme = "dark"
     page.theme_mode = saved_theme
     page.adaptive = True
-    page.window.width = 350
-    page.window.height = 700
     routes(page)
     token = page.client_storage.get("token")
     if token:
-        api_client = APIClient()
-        response = api_client.get_user_profile(token)
+        response = APIClient().get_user_profile(token)
         if response.status_code == 200:
             page.go('/home')
         else:
