@@ -1,19 +1,10 @@
-from Home.user_online import UserOnline, handle_websocket
+from Home.user_online import set_user_online
 from api.api_client import APIClient
+import asyncio
 
 
-async def set_user_online(page):
-    token = page.client_storage.get("token")
-    if token:
-        response = APIClient().get_user_profile(token)
-        user_id = response.json().get("id")
-        websocket_handler = UserOnline(token, user_id=user_id)
-        await handle_websocket(websocket_handler)
-
-        async def on_disconnect(e):
-            await websocket_handler.close()
-
-        page.on_close = on_disconnect
+def user_online(page):
+    asyncio.run(set_user_online(page))
 
 
 def get_theme_mode(page):

@@ -1,6 +1,8 @@
 import json
 import websockets
 
+from api.api_client import APIClient
+
 
 class UserOnline:
     def __init__(self, token, user_id):
@@ -10,36 +12,43 @@ class UserOnline:
 
     async def connect(self):
         try:
-            async with websockets.connect(self.websocket_url,
-                                          extra_headers={"Authorization": f"Bearer {self.token}"}) as websocket:
+            async with websockets.connect(
+                    self.websocket_url,
+                    extra_headers={
+                        "Authorization": f"Bearer {self.token}"}) as websocket:
                 self.websocket = websocket
-                print("Connected to WebSocket")
                 await self.send_online_status(True)
                 while True:
-                    try:
-                        message = await websocket.recv()
-                        data = json.loads(message)
-                        print(f"Received data: {data}")
-                    except json.JSONDecodeError:
-                        print("Failed to decode JSON message")
-                    except websockets.exceptions.ConnectionClosed:
-                        print("WebSocket connection closed")
-                        break
+                    message = await websocket.recv()
+                    data = json.loads(message)
+                    return data
         except Exception as e:
-            print(f"WebSocket connection error: {e}")
+            return e
 
     async def send_online_status(self, is_online):
         if self.websocket:
             data = json.dumps({'online': is_online})
             await self.websocket.send(data)
-            print(f"Sent online status: {is_online}")
 
     async def close(self):
         if self.websocket:
             await self.send_online_status(False)
             await self.websocket.close()
-            print("WebSocket connection closed")
 
 
 async def handle_websocket(websocket_handler):
     await websocket_handler.connect()
+
+
+async def set_user_online(page):
+    token = page.client_storage.get("token")
+    if token:
+        response = APIClient().get_user_profile(token)
+        user_id = response.json().get("id")
+        websocket_handler = UserOnline(token, user_id=user_id)
+        await handle_websocket(websocket_handler)
+
+        async def on_disconnect(e):
+            await websocket_handler.close()
+
+        page.on_close = on_disconnect

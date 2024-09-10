@@ -1,11 +1,9 @@
 import json
-
 from asgiref.sync import sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
 from django.utils import timezone
 from users.models.user_online import UserOnline
 from users.models.users import Users
-
 from chat.models import ChatRoom, ChatMessage
 
 
@@ -20,16 +18,16 @@ class UserOnlineConsumers(AsyncWebsocketConsumer):
         await sync_to_async(UserOnline.objects.update_or_create)(
             user_id=self.user_id, defaults={'is_online': True, 'last_online': timezone.now()}
         )
-        print(f"User {self.user_id} connected")
 
     async def disconnect(self, close_code):
         await sync_to_async(UserOnline.objects.filter(user_id=self.user_id).update)(
             is_online=False, last_online=timezone.now()
         )
-        print(f"User {self.user_id} disconnected")
 
     async def receive(self, text_data=None, bytes_data=None):
-        print(f"Received data: {text_data}")
+        data = json.loads(text_data)
+        online = data.get('online')
+        return online
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
