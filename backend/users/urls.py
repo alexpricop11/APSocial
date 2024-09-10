@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import auth, password, profile, users_block, user_online
+from .views import auth, password, profile, users_block
 
 urlpatterns = [
     path('register', auth.Register.as_view()),
@@ -10,5 +10,4 @@ urlpatterns = [
     path('reset-password', password.reset_password),
     path('verify-code', password.verify_reset_code),
     path('block-user', users_block.blocked_users),
-    path('user-status', user_online.status_user)
 ]
