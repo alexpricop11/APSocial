@@ -1,1 +1,1 @@
-I am creating a social network mobile application
+I am creating a social network mobile application in Django and Flet

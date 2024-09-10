@@ -1,10 +1,13 @@
 from django.contrib.auth.base_user import BaseUserManager, AbstractBaseUser
+from django.contrib.auth.models import PermissionsMixin
 from django.db import models
 import uuid
 
 
 class UserManager(BaseUserManager):
     def create_user(self, username, email=None, password=None):
+        if not email:
+            raise ValueError("Users Must Have an email address")
         if not username:
             raise ValueError("Users Must Have a username")
         user = self.model(username=username, email=self.normalize_email(email))
@@ -18,13 +21,11 @@ class UserManager(BaseUserManager):
         if password is None:
             raise TypeError("Superusers must have a password.")
         user = self.create_user(username=username, email=email, password=password)
-        user.is_superuser = True
-        user.is_staff = True
         user.save(using=self._db)
         return user
 
 
-class Users(AbstractBaseUser):
+class Users(AbstractBaseUser, PermissionsMixin):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     username = models.CharField(max_length=20, unique=True)
     online = models.BooleanField(default=False)
@@ -39,9 +40,12 @@ class Users(AbstractBaseUser):
     reset_code_expiry = models.DateTimeField(blank=True, null=True)
 
     objects = UserManager()
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = ['email']
 
     def __str__(self):
         return self.username

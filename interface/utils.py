@@ -1,12 +1,19 @@
+from Home.user_online import UserOnline, handle_websocket
 from api.api_client import APIClient
 
 
-def get_user_status(page, response, token):
-    if page.route == '/home':
-        data = {'user_id': response.json().get('id'), 'online': True}
-    else:
-        data = {'user_id': response.json().get('id'), 'online': False}
-    APIClient().user_status(token, data)
+async def set_user_online(page):
+    token = page.client_storage.get("token")
+    if token:
+        response = APIClient().get_user_profile(token)
+        user_id = response.json().get("id")
+        websocket_handler = UserOnline(token, user_id=user_id)
+        await handle_websocket(websocket_handler)
+
+        async def on_disconnect(e):
+            await websocket_handler.close()
+
+        page.on_close = on_disconnect
 
 
 def get_theme_mode(page):
@@ -22,9 +29,7 @@ def get_token(page):
         response = APIClient().get_user_profile(token)
         if response.status_code == 200:
             page.go('/home')
-            get_user_status(page, response, token)
         else:
             page.go('/auth')
-            get_user_status(page, response, token)
     else:
         page.go('/auth')

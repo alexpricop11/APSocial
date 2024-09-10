@@ -41,10 +41,3 @@ class APIClient:
         url = f'{self.BASE_URL}/verify-code'
         response = requests.post(url, data=data)
         return response
-
-    def user_status(self, token, data):
-        url = f'{self.BASE_URL}/user-status'
-        headers = {'Authorization': f'Bearer {token}'}
-        response = requests.post(url, headers=headers, json=data)
-        print(response.status_code, response.json())
-        return response
