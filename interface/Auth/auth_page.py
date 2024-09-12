@@ -22,8 +22,6 @@ class AuthPage(ft.View):
         elif self.auth_button.selected_index == 1:
             self.content_container.content = self.login
         self.content_container.update()
-
-    def auth_button(self):
         self.on_auth_button_change(None)
 
     def build(self):

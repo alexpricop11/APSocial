@@ -28,7 +28,7 @@ class UserManager(BaseUserManager):
 class Users(AbstractBaseUser, PermissionsMixin):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     username = models.CharField(max_length=20, unique=True)
-    password = models.CharField(max_length=100)
+    password = models.CharField(max_length=128)
     email = models.EmailField(unique=False, blank=True, null=True)
     phone_number = models.CharField(max_length=15, blank=True, null=True)
     birthday = models.DateField(null=True, blank=True)

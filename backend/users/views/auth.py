@@ -12,7 +12,7 @@ JWT_ENCODE_HANDLER = api_settings.JWT_ENCODE_HANDLER
 
 
 class Register(APIView):
-    permission_classes = (AllowAny,)
+    permission_classes = [AllowAny]
     serializer_class = UserRegistrationSerializer
 
     def post(self, request):
@@ -20,16 +20,17 @@ class Register(APIView):
         if serializer.is_valid():
             username = serializer.validated_data['username']
             if Users.objects.filter(username=username).exists():
-                return Response({'username': 'Username already exists'})
+                return Response('Username already exists')
             user = serializer.save()
             payload = JWT_PAYLOAD_HANDLER(user)
             token = JWT_ENCODE_HANDLER(payload)
             return Response({'token': token, 'message': 'User created successfully'}, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class Login(APIView):
-    permission_classes = (AllowAny,)
+    permission_classes = [AllowAny]
     serializer_class = UserLoginSerializer
 
     def post(self, request):

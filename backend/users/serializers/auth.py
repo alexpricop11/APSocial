@@ -33,4 +33,4 @@ class UserLoginSerializer(serializers.Serializer):
         user = authenticate(username=username, password=password)
         if not user:
             raise serializers.ValidationError("Invalid username or password")
-        return user
+        return data

@@ -27,24 +27,26 @@ class Register(ft.UserControl):
         }
         response = self.api_client.register(data)
         if response.status_code == 201:
-            try:
-                response_data = response.json()
-                token = response_data.get("token")
-                self.page.client_storage.set("token", token)
-                self.page.go('/home')
-            except requests.exceptions.JSONDecodeError:
-                self.page.snack_bar = ft.SnackBar(
-                    ft.Text(f'Registration successful, but received invalid JSON response.'), bgcolor='yellow')
-                self.page.snack_bar.open = True
-                self.page.update()
+            self.success_register(response)
         else:
-            try:
-                error_message = response.json()
-            except requests.exceptions.JSONDecodeError:
-                error_message = "Invalid response from server."
-            self.page.snack_bar = ft.SnackBar(ft.Text(f'{error_message}'), bgcolor='red')
-            self.page.snack_bar.open = True
-            self.page.update()
+            self.failed_register(response)
+
+    def success_register(self, response):
+        response_data = response.json()
+        token = response_data.get("token")
+        self.page.client_storage.set("token", token)
+        self.page.go('/home')
+
+    def failed_register(self, response):
+        try:
+            error_message = response.json()
+            error_text = ' \n'.join([f"{field}: {msg[0]}" for field, msg in error_message.items()])
+        except requests.exceptions.JSONDecodeError:
+            error_text = "Invalid response from server."
+
+        self.page.snack_bar = ft.SnackBar(ft.Text(f'{error_text}'), bgcolor='red')
+        self.page.snack_bar.open = True
+        self.page.update()
 
     @staticmethod
     def is_valid_email(email):

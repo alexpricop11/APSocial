@@ -18,13 +18,19 @@ class Login(ft.UserControl):
         }
         response = self.api_client.login(data)
         if response.status_code == 200:
-            token = response.json().get("token")
-            self.page.client_storage.set("token", token)
-            self.page.go('/home')
+            self.success_login(response)
         else:
-            self.page.snack_bar = ft.SnackBar(ft.Text('Numele sau parola nu este corectă sau nu există'), bgcolor='red')
-            self.page.snack_bar.open = True
-            self.page.update()
+            self.failed_login()
+
+    def success_login(self, response):
+        token = response.json().get("token")
+        self.page.client_storage.set("token", token)
+        self.page.go('/home')
+
+    def failed_login(self):
+        self.page.snack_bar = ft.SnackBar(ft.Text('Numele sau parola nu este corectă sau nu există'), bgcolor='red')
+        self.page.snack_bar.open = True
+        self.page.update()
 
     def reset_password(self, e):
         self.page.go('/reset-password')

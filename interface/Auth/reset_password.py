@@ -2,7 +2,7 @@ from api.api_client import APIClient
 import flet as ft
 
 
-class ResetPassword(ft.UserControl):
+class ResetPassword(ft.View):
     def __init__(self):
         super().__init__()
         self.api_client = APIClient()
@@ -11,7 +11,7 @@ class ResetPassword(ft.UserControl):
         self.back_button = ft.IconButton(icon=ft.icons.ARROW_BACK, on_click=self.go_back)
 
     def send_reset_code(self, e):
-        username = self.username.value
+        username = self.username.value.strip()
         if username:
             response = self.api_client.reset_password({'username': username})
             self.handle_response(response)
@@ -47,7 +47,7 @@ class ResetPassword(ft.UserControl):
                 alignment=ft.alignment.center))
 
 
-class VerifyCode(ft.UserControl):
+class VerifyCode(ft.View):
     def __init__(self):
         super().__init__()
         self.api_client = APIClient()
