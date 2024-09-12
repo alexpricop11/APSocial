@@ -37,16 +37,15 @@ class UserProfile(ft.UserControl):
             self.username = data.get('username')
             self.birthday = self.format_date(data.get('birthday')) if data.get('birthday') else ''
             self.email = data.get('email')
-            self.my_followers = data.get('my_followers')
-            self.follow = data.get('follow')
+            self.my_followers = data.get('my_followers', 0)
+            self.follow = data.get('follow', 0)
         else:
-            self.show_snackbar(ft.Text(response.json().get('error')), 'red')
+            self.show_snackbar(response.json().get('error'), 'red')
 
     def edit_profile(self, e):
         username_field = ft.TextField(label="Numele", value=self.username)
         email_field = ft.TextField(label="Email-ul", value=self.email)
         birthday_field = ft.TextField(label='Data nașterii (Anul-Luna-Data)', value=self.birthday)
-        result = ft.Column()
 
         def on_submit(e):
             data = {
@@ -54,77 +53,65 @@ class UserProfile(ft.UserControl):
                 'email': email_field.value,
                 'birthday': self.format_date(birthday_field.value)
             }
-            response = self.api_client.edit_user_profile(self.token, data=data)
-            if response.status_code == 200:
-                response_data = response.json()
-                new_token = response_data.get('token')
-                if new_token:
-                    self.page.client_storage.set("token", new_token)
-                    self.token = new_token
-                self.show_snackbar('Profilul a fost actualizat', 'green')
-                self.get_info_user()
-                self.close_dialog()
-                self.update()
-            else:
-                result.controls.append(ft.Text(response.json()))
-            self.page.update()
+            self.update_user_profile(data)
 
-        content = ft.Column([username_field, email_field, birthday_field,
-                             ft.Row([
-                                 ft.TextButton("Anulează", on_click=lambda _: self.close_dialog()),
-                                 ft.TextButton("Confirmă", on_click=on_submit)
-                             ]),
-                             result
-                             ])
-        self.show_dialog('Editează profil-ul', content=content)
+        self.show_dialog('Editează profil-ul', ft.Column([
+            username_field, email_field, birthday_field,
+            ft.Row([
+                ft.TextButton("Anulează", on_click=self.close_dialog),
+                ft.TextButton("Confirmă", on_click=on_submit)
+            ]),
+            ft.Column()
+        ]))
+
+    def update_user_profile(self, data):
+        try:
+            response = self.api_client.edit_user_profile(self.token, data=data)
+            response.raise_for_status()
+            response_data = response.json()
+            new_token = response_data.get('token')
+            if new_token:
+                self.page.client_storage.set("token", new_token)
+                self.token = new_token
+            self.show_snackbar('Profilul a fost actualizat', 'green')
+            self.close_dialog()
+            self.get_info_user()
+            self.page.update()
+        except requests.exceptions.RequestException as e:
+            self.show_snackbar(f'Error: {e}', 'red')
 
     def change_password(self, e):
         current_password_field = ft.TextField(label='Parola actuală', password=True, can_reveal_password=True)
         new_password_field = ft.TextField(label='Parola nouă', password=True, can_reveal_password=True)
-        result = ft.Column()
 
         def on_submit(e):
             current_password = current_password_field.value
             new_password = new_password_field.value
-            if len(new_password) < 6:
-                result.controls.append(ft.Text('Parola trebuie să fie de cel puțin 6 caractere'))
-                self.page.update()
-                return
-            if new_password == current_password:
-                result.controls.append(ft.Text('Noua parolă nu poate fi aceeași cu parola actuală'))
-                self.page.update()
-                return
-            data = {
-                'password': current_password,
-                'new_password': new_password
-            }
-            response = self.api_client.change_password(self.token, data=data)
-            if response.status_code == 200:
-                self.show_snackbar("Parola a fost schimbată", 'green')
-                self.close_dialog()
-            elif response.status_code == 400:
-                try:
-                    errors = response.json()
-                    error_texts = [ft.Text(f"{k}: {v}") for k, v in errors.items()]
-                    result.controls.extend(error_texts)
-                except requests.exceptions.JSONDecodeError:
-                    result.controls.append(ft.Text(response.json().get('error')))
-            elif response.status_code == 500:
-                result.controls.append(ft.Text(response.json().get('error')))
-            else:
-                result.controls.append(ft.Text(response.json().get('error')))
-            self.page.update()
+            self.update_password(current_password, new_password)
 
-        content = ft.Column([
-            current_password_field,
-            new_password_field,
+        self.show_dialog('Schimbă parola', ft.Column([
+            current_password_field, new_password_field,
             ft.Row([
-                ft.TextButton("Anulează", on_click=lambda _: self.close_dialog()),
+                ft.TextButton("Anulează", on_click=self.close_dialog),
                 ft.TextButton("Confirmă", on_click=on_submit)
             ]),
-            result
-        ])
-        self.show_dialog('Schimbă parola', content=content)
+            ft.Column()
+        ]))
+
+    def update_password(self, current_password, new_password):
+        if len(new_password) < 6:
+            self.show_snackbar('Parola trebuie să fie de cel puțin 6 caractere', 'red')
+            return
+        if new_password == current_password:
+            self.show_snackbar('Noua parolă nu poate fi aceeași cu parola actuală', 'red')
+            return
+
+        data = {'password': current_password, 'new_password': new_password}
+        response = self.api_client.change_password(self.token, data=data)
+        if response.status_code == 200:
+            self.show_snackbar("Parola a fost schimbată", 'green')
+        else:
+            self.show_error(response)
 
     def change_theme(self, e):
         new_theme = 'light' if self.page.theme_mode == 'dark' else 'dark'
@@ -136,7 +123,7 @@ class UserProfile(ft.UserControl):
         self.page.client_storage.remove("token")
         self.page.go('/auth')
 
-    def close_dialog(self):
+    def close_dialog(self, e=None):
         if self.page.dialog:
             self.page.dialog.open = False
             self.page.update()
@@ -151,11 +138,30 @@ class UserProfile(ft.UserControl):
         self.page.dialog.open = True
         self.page.update()
 
+    def show_error(self, response):
+        try:
+            error_texts = [ft.Text(f"{k}: {v}") for k, v in response.json().items()]
+        except requests.exceptions.JSONDecodeError:
+            error_texts = [ft.Text(response.json().get('error'))]
+        self.page.dialog.controls.extend(error_texts)
+        self.page.update()
+
     def show_user_info(self):
         profile = ft.Text(f'{self.username}', size=24, weight=ft.FontWeight.BOLD, expand=True)
         follow_text = ft.Text(f"Te urmărește:\n {self.my_followers}", size=16, color=ft.colors.GREY)
         followed_by_text = ft.Text(f"Urmărești:\n {self.follow}", size=16, color=ft.colors.GREY)
-        popup_menu_button = ft.PopupMenuButton(
+        popup_menu_button = self.create_popup_menu()
+        button = ft.Row([profile, popup_menu_button], alignment=ft.MainAxisAlignment.CENTER,
+                        vertical_alignment=ft.CrossAxisAlignment.CENTER, spacing=20)
+        user_info = ft.Row([follow_text, followed_by_text], alignment=ft.MainAxisAlignment.START, spacing=20)
+        elements = [button, user_info]
+        if self.birthday:
+            user_birthday = ft.Text(f'Data de naștere: \n{self.birthday}', size=16)
+            elements.append(user_birthday)
+        return ft.Column(elements, alignment=ft.MainAxisAlignment.CENTER, spacing=15)
+
+    def create_popup_menu(self):
+        return ft.PopupMenuButton(
             icon=ft.icons.MORE_VERT,
             items=[
                 ft.PopupMenuItem(text="Editează profil-ul", icon=ft.icons.DRAW, on_click=self.edit_profile),
@@ -164,24 +170,6 @@ class UserProfile(ft.UserControl):
                 ft.PopupMenuItem(text="Ieșire", icon=ft.icons.LOGOUT, on_click=self.logout)
             ]
         )
-        button = ft.Row(
-            [profile, popup_menu_button],
-            alignment=ft.MainAxisAlignment.CENTER,
-            vertical_alignment=ft.CrossAxisAlignment.CENTER,
-            spacing=20)
-        user_info = ft.Row(
-            [follow_text, followed_by_text],
-            alignment=ft.MainAxisAlignment.START,
-            spacing=20)
-        elements = [button, user_info]
-        if self.birthday:
-            user_birthday = ft.Text(f'Data de naștere: \n{self.birthday}', size=16)
-            elements.append(user_birthday)
-        user = ft.Column(
-            elements,
-            alignment=ft.MainAxisAlignment.CENTER,
-            spacing=15)
-        return user
 
     def build(self):
         self.get_token()
