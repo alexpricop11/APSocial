@@ -22,7 +22,6 @@ class AuthPage(ft.View):
         elif self.auth_button.selected_index == 1:
             self.content_container.content = self.login
         self.content_container.update()
-        self.on_auth_button_change(None)
 
     def build(self):
         welcome_text = ft.Text("Bun venit pe AP Social!", size=20, height=100, text_align=ft.TextAlign.CENTER)

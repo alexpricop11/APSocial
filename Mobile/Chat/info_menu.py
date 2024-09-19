@@ -3,8 +3,8 @@ from api.api_chat import APIChat
 import flet as ft
 
 
-class InfoMenu(ft.UserControl):
-    def __init__(self, token, chat_id, name_chat):
+class InfoMenu(ft.View):
+    def __init__(self, token: str, chat_id: id, name_chat: str):
         super().__init__()
         self.api = APIChat()
         self.user_id = self.decode_token(token)

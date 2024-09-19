@@ -1,6 +1,7 @@
 from Home.user_online import set_user_online
 from api.api_client import APIClient
 import asyncio
+import flet as ft
 
 
 def user_online(page):
@@ -12,6 +13,7 @@ def get_theme_mode(page):
     if saved_theme is None:
         saved_theme = "dark"
     page.theme_mode = saved_theme
+    page.update()
 
 
 def get_token(page):
@@ -24,3 +26,15 @@ def get_token(page):
             page.go('/auth')
     else:
         page.go('/auth')
+
+
+def show_snackbar(page, message, color):
+    page.snack_bar = ft.SnackBar(ft.Text(message), bgcolor=color)
+    page.snack_bar.open = True
+    page.update()
+
+
+def show_dialog(page, title, content):
+    page.dialog = ft.AlertDialog(title=ft.Text(title), content=content)
+    page.dialog.open = True
+    page.update()

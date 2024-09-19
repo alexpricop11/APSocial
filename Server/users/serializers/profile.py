@@ -1,7 +1,6 @@
+from users.models.user_online import UserOnline
 from rest_framework import serializers
 from users.models.users import Users
-
-from users.models.user_online import UserOnline
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
@@ -13,11 +12,16 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_online(user):
-        online_status = UserOnline.objects.get(user=user)
-        return online_status.is_online
+        try:
+            online_status = UserOnline.objects.get(user=user)
+            return online_status.is_online
+        except UserOnline.DoesNotExist:
+            return False
 
 
 class EditUserProfileSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Users
         fields = ['username', 'email', 'birthday']
+

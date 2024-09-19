@@ -26,6 +26,12 @@ class ChatList(ft.UserControl):
         else:
             self.page.go('/auth')
 
+    def create_on_click_handler(self, chat_id):
+        return lambda e: self.open_chat(chat_id)
+
+    def create_on_long_press_handler(self, chat_id, chat_name):
+        return lambda e: self.show_menu(chat_id, chat_name)
+
     def chat_list(self):
         chat_list = [
             ft.ListTile(
@@ -36,14 +42,12 @@ class ChatList(ft.UserControl):
                         'last_message', ''),
                     size=14,
                     color=ft.colors.GREY_500),
-                on_long_press=lambda e, chat_id=chat['id']: self.show_menu(chat_id, chat.get('name')),
-                on_click=lambda e, chat_id=chat['id']: self.open_chat(chat_id)) for chat in self.chats
+                on_long_press=self.create_on_long_press_handler(chat['id'], chat.get('name')),
+                on_click=self.create_on_click_handler(chat['id'])) for chat in self.chats
         ]
-        return ft.Container(
-            ft.ListView(
-                controls=chat_list,
-                height=self.page.window.height - 52,
-            ),
+        return ft.ListView(
+            controls=chat_list,
+            height=self.page.window.height - 70,
         )
 
     def delete_chat(self, chat_id):

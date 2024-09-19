@@ -28,6 +28,10 @@ class HomeView(ft.View):
             content = UserProfile()
         self.show_content(content)
 
+    def show_content(self, content):
+        self.content_container.content = content
+        self.content_container.update()
+
     def build(self):
         safe_area = ft.SafeArea(
             ft.Column([
@@ -35,7 +39,3 @@ class HomeView(ft.View):
             ]),
         )
         return safe_area
-
-    def show_content(self, content):
-        self.content_container.content = content
-        self.content_container.update()

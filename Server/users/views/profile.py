@@ -29,7 +29,7 @@ class EditProfile(APIView):
 
     def put(self, request):
         user = request.user
-        serializer = self.serializer_class(user, data=request.data)
+        serializer = self.serializer_class(user, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             payload = JWT_PAYLOAD_HANDLER(user)
