@@ -24,8 +24,11 @@ class Login(ft.UserControl):
 
     def success_login(self, response):
         token = response.json().get("token")
-        self.page.client_storage.set("token", token)
-        self.page.go('/home')
+        if self.page:
+            self.page.client_storage.set("token", token)
+            self.page.go('/home')
+        else:
+            print("Page is not available.")
 
     def failed_login(self):
         self.page.snack_bar = ft.SnackBar(ft.Text('Numele sau parola nu este corectă sau nu există'), bgcolor='red')

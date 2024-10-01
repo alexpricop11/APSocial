@@ -11,6 +11,7 @@ class UserProfile(ft.UserControl):
         super().__init__()
         self.api_client = APIClient()
         self.token = None
+        self.profile_photo = None
         self.username = None
         self.online = None
         self.my_followers = 0
@@ -37,6 +38,7 @@ class UserProfile(ft.UserControl):
         response = self.api_client.get_user_profile(self.token)
         if response.status_code == 200:
             data = response.json()
+            self.profile_photo = data.get('profile_image', None)
             self.username = data.get('username')
             self.online = data.get('online')
             self.birthday = self.format_date(data.get('birthday')) if data.get('birthday') else ''
@@ -136,11 +138,12 @@ class UserProfile(ft.UserControl):
         self.page.update()
 
     def show_user_info(self):
-        profile = ft.Text(f'{self.username}', size=24, weight=ft.FontWeight.BOLD)
+        profile_image = ft.Icon(ft.icons.PERSON, size=24)
+        name = ft.Text(f'{self.username}', size=24, weight=ft.FontWeight.BOLD)
         online = ft.CircleAvatar(bgcolor='green', radius=5) if self.online else None
         follow_text = ft.Text(f"Te urmărește:\n {self.my_followers}", size=16, color=ft.colors.GREY)
         followed_by_text = ft.Text(f"Urmărești:\n {self.follow}", size=16, color=ft.colors.GREY)
-        user_status_elements = [profile]
+        user_status_elements = [profile_image, name]
         if online:
             user_status_elements.append(online)
 
@@ -148,7 +151,6 @@ class UserProfile(ft.UserControl):
         button = ft.Row([user_status, self.create_popup_menu()], alignment=ft.MainAxisAlignment.CENTER,
                         vertical_alignment=ft.CrossAxisAlignment.CENTER, spacing=20)
         user_info = ft.Row([follow_text, followed_by_text], alignment=ft.MainAxisAlignment.START, spacing=20)
-
         elements = [button, user_info]
         if self.birthday:
             user_birthday = ft.Text(f'Data de naștere: \n{self.birthday}', size=16)

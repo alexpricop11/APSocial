@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from api.api_client import APIClient
 import flet as ft
 import requests
@@ -10,7 +12,7 @@ class Register(ft.UserControl):
         self.username = ft.TextField(label='Numele', width=200, on_change=self.validate)
         self.user_email = ft.TextField(label='Email', width=200, on_change=self.validate)
         self.phone_number = ft.TextField(label='Numărul de telefon', width=200, on_change=self.validate)
-        self.birthday = ft.TextField(label='Data nașterii (Anul-Luna-Data)', width=200)
+        self.birthday = ft.TextField(label='Data nașterii (Anul-Luna-Data)', width=200, on_change=self.validate)
         self.user_pass = ft.TextField(label='Parola', password=True, width=200, can_reveal_password=True,
                                       on_change=self.validate)
         self.register_button = ft.OutlinedButton(text='Înregistrează-te', width=200, on_click=self.register,
@@ -58,12 +60,18 @@ class Register(ft.UserControl):
         pattern = r'^(\+\d{1,3}\s?)?\d{9,15}$'
         return re.match(pattern, number) is not None
 
+    @staticmethod
+    def valid_birthday(birthday):
+        birthday_date = datetime.strptime(birthday, '%Y-%m-%d')
+        return birthday_date <= datetime.utcnow()
+
     def validate(self, e):
         email_valid = self.is_valid_email(self.user_email.value) if self.user_email.value else True
         phone_valid = self.is_valid_number(self.phone_number.value) if self.phone_number.value else True
         password_valid = len(self.user_pass.value) >= 6 if self.user_pass.value else False
+        birthday_valid = self.valid_birthday(self.birthday.value) if self.birthday.value else False
         self.register_button.disabled = not all(
-            [self.username.value, self.user_pass.value, password_valid, email_valid, phone_valid, self.birthday])
+            [self.username.value, self.user_pass.value, password_valid, email_valid, phone_valid, birthday_valid])
         self.update()
 
     def build(self):

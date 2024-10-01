@@ -2,6 +2,9 @@ from Profile.profile import UserProfile
 from Chat.chat_list import ChatList
 from .home_page import HomePage
 import flet as ft
+from Notification.notification import Notification
+
+from Search.search import Search
 
 
 class HomeView(ft.View):
@@ -10,8 +13,10 @@ class HomeView(ft.View):
         self.navigation_bar = ft.NavigationBar(
             destinations=[
                 ft.NavigationBarDestination(icon=ft.icons.HOME, label='Acasă'),
+                ft.NavigationBarDestination(icon=ft.icons.SEARCH, label='Caută'),
                 ft.NavigationBarDestination(icon=ft.icons.CHAT_BUBBLE, label='Chat'),
-                ft.NavigationBarDestination(icon=ft.icons.ACCOUNT_CIRCLE, label='Profil')
+                ft.NavigationBarDestination(icon=ft.icons.CIRCLE_NOTIFICATIONS, label='Notificări'),
+                ft.NavigationBarDestination(icon=ft.icons.ACCOUNT_CIRCLE, label='Profil'),
             ], on_change=self.navigate, selected_index=0, height=65, width=100
         )
         self.content_container = ft.Container(HomePage())
@@ -23,8 +28,12 @@ class HomeView(ft.View):
         if index == 0:
             content = HomePage()
         elif index == 1:
-            content = ChatList()
+            content = Search()
         elif index == 2:
+            content = ChatList()
+        elif index == 3:
+            content = Notification()
+        elif index == 4:
             content = UserProfile()
         self.show_content(content)
 

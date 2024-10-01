@@ -8,7 +8,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Users
-        fields = ['id', 'username', 'my_followers', 'follow', 'birthday', 'email', 'online']
+        fields = ['id', 'profile_image', 'username', 'my_followers', 'follow', 'birthday', 'email', 'online']
 
     @staticmethod
     def get_online(user):
@@ -20,8 +20,6 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
 
 class EditUserProfileSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Users
-        fields = ['username', 'email', 'birthday']
-
+        fields = ['username', 'email', 'birthday', 'profile_image']
