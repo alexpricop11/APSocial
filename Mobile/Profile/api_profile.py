@@ -1,18 +1,8 @@
 import requests
 
 
-class APIClient:
+class APIProfile:
     BASE_URL = 'http://127.0.0.1:8000'
-
-    def register(self, data):
-        url = f'{self.BASE_URL}/register'
-        response = requests.post(url, data=data)
-        return response
-
-    def login(self, data):
-        url = f'{self.BASE_URL}/login'
-        response = requests.post(url, data=data)
-        return response
 
     def get_user_profile(self, token):
         url = f'{self.BASE_URL}/user-profile'
@@ -30,14 +20,4 @@ class APIClient:
         url = f'{self.BASE_URL}/change-password'
         headers = {'Authorization': f'Bearer {token}'}
         response = requests.post(url, data=data, headers=headers)
-        return response
-
-    def reset_password(self, data):
-        url = f'{self.BASE_URL}/reset-password'
-        response = requests.post(url, data=data)
-        return response
-
-    def verify_code(self, data):
-        url = f'{self.BASE_URL}/verify-code'
-        response = requests.post(url, data=data)
         return response

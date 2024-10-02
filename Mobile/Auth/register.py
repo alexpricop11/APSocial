@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from api.api_client import APIClient
+from .api_auth import APIAuth
 import flet as ft
 import requests
 import re
@@ -9,6 +9,7 @@ import re
 class Register(ft.UserControl):
     def __init__(self):
         super().__init__()
+        self.api = APIAuth()
         self.username = ft.TextField(label='Numele', width=200, on_change=self.validate)
         self.user_email = ft.TextField(label='Email', width=200, on_change=self.validate)
         self.phone_number = ft.TextField(label='Numărul de telefon', width=200, on_change=self.validate)
@@ -17,7 +18,6 @@ class Register(ft.UserControl):
                                       on_change=self.validate)
         self.register_button = ft.OutlinedButton(text='Înregistrează-te', width=200, on_click=self.register,
                                                  disabled=True)
-        self.api_client = APIClient()
 
     def register(self, e):
         data = {
@@ -27,7 +27,7 @@ class Register(ft.UserControl):
             'phone_number': self.phone_number.value,
             'birthday': self.birthday.value
         }
-        response = self.api_client.register(data)
+        response = self.api.register(data)
         if response.status_code == 201:
             self.success_register(response)
         else:

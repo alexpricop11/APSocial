@@ -1,6 +1,6 @@
 import flet as ft
 from Chat.chat_room import ChatRoom
-from api.api_chat import APIChat
+from .api_chat import APIChat
 
 
 class ChatList(ft.UserControl):

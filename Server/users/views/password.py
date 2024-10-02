@@ -1,6 +1,6 @@
 from rest_framework import status
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from users.models.users import Users
@@ -9,16 +9,17 @@ from users.services import get_user_email, password_reset
 
 @api_view(['POST'])
 @authentication_classes([JSONWebTokenAuthentication])
+@permission_classes([IsAuthenticated])
 def change_password(request):
     user = request.user
     password = request.data.get('password')
     new_password = request.data.get('new_password')
     if not password or not new_password:
-        return Response({'error', 'Both current and new passwords are required'})
+        return Response({'error': 'Both current and new passwords are required'}, status=400)
     if not user.check_password(password):
-        return Response({'error', 'Current password is incorrect'})
+        return Response({'error': 'Current password is incorrect'}, status=400)
     if not new_password:
-        return Response({'error', 'Empty new password'})
+        return Response({'error': 'Empty new password'}, status=400)
     user.set_password(new_password)
     user.save()
     return Response(status=200)

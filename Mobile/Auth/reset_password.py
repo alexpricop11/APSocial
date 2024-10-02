@@ -1,11 +1,11 @@
-from api.api_client import APIClient
+from .api_auth import APIAuth
 import flet as ft
 
 
 class ResetPassword(ft.View):
     def __init__(self):
         super().__init__()
-        self.api_client = APIClient()
+        self.api = APIAuth()
         self.username = ft.TextField(label='Introduceți numele')
         self.request_button = ft.ElevatedButton("Trimite Codul", on_click=self.send_reset_code)
         self.back_button = ft.IconButton(icon=ft.icons.ARROW_BACK, on_click=self.go_back)
@@ -13,7 +13,7 @@ class ResetPassword(ft.View):
     def send_reset_code(self, e):
         username = self.username.value.strip()
         if username:
-            response = self.api_client.reset_password({'username': username})
+            response = self.api.reset_password({'username': username})
             self.handle_response(response)
         else:
             self.show_snackbar('Introduceți un nume existent', 'red')
@@ -50,7 +50,7 @@ class ResetPassword(ft.View):
 class VerifyCode(ft.View):
     def __init__(self):
         super().__init__()
-        self.api_client = APIClient()
+        self.api = APIAuth()
         self.username = None
         self.back_button = ft.IconButton(icon=ft.icons.ARROW_BACK, on_click=self.go_auth)
         self.reset_code = ft.TextField(label='Introduceți codul')
@@ -62,7 +62,7 @@ class VerifyCode(ft.View):
         code = self.reset_code.value
         new_password = self.new_password.value
         if username and code and new_password:
-            response = self.api_client.verify_code({
+            response = self.api.verify_code({
                 'username': username,
                 'reset_code': code,
                 'new_password': new_password
@@ -83,6 +83,7 @@ class VerifyCode(ft.View):
             self.page.snack_bar = ft.SnackBar(ft.Text('Completează toate câmpurile.'), bgcolor='red')
             self.page.snack_bar.open = True
             self.page.update()
+
 
     def go_auth(self, e):
         self.page.go('/reset-password')

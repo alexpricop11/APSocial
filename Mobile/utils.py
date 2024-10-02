@@ -1,5 +1,5 @@
 from Home.user_online import set_user_online
-from api.api_client import APIClient
+from Profile.api_profile import APIProfile
 import asyncio
 import flet as ft
 
@@ -19,7 +19,7 @@ def get_theme_mode(page):
 def get_token(page):
     token = page.client_storage.get("token")
     if token:
-        response = APIClient().get_user_profile(token)
+        response = APIProfile().get_user_profile(token)
         if response.status_code == 200:
             page.go('/home')
         else:

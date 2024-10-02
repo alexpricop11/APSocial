@@ -1,5 +1,5 @@
 import jwt
-from api.api_chat import APIChat
+from .api_chat import APIChat
 import flet as ft
 
 

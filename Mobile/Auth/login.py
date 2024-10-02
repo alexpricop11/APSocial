@@ -1,11 +1,11 @@
 import flet as ft
-from api.api_client import APIClient
+from .api_auth import APIAuth
 
 
 class Login(ft.UserControl):
     def __init__(self):
         super().__init__()
-        self.api_client = APIClient()
+        self.api = APIAuth()
         self.username = ft.TextField(label='Numele', width=200, on_change=self.validate)
         self.user_pass = ft.TextField(label='Parola', password=True, width=200, can_reveal_password=True,
                                       on_change=self.validate)
@@ -16,7 +16,7 @@ class Login(ft.UserControl):
             'username': self.username.value.strip(),
             'password': self.user_pass.value.strip()
         }
-        response = self.api_client.login(data)
+        response = self.api.login(data)
         if response.status_code == 200:
             self.success_login(response)
         else:

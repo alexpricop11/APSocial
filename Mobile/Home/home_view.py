@@ -1,10 +1,11 @@
-from Profile.profile import UserProfile
 from Chat.chat_list import ChatList
 from .home_page import HomePage
 import flet as ft
 from Notification.notification import Notification
 
 from Search.search import Search
+
+from Profile.my_profile.my_profile import MyProfile
 
 
 class HomeView(ft.View):
@@ -34,7 +35,7 @@ class HomeView(ft.View):
         elif index == 3:
             content = Notification()
         elif index == 4:
-            content = UserProfile()
+            content = MyProfile()
         self.show_content(content)
 
     def show_content(self, content):

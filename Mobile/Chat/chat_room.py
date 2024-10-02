@@ -4,7 +4,7 @@ from datetime import datetime
 
 import flet as ft
 import websockets
-from api.api_chat import APIChat
+from .api_chat import APIChat
 from .info_menu import InfoMenu
 
 

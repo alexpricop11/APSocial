@@ -9,12 +9,9 @@ def main(page: ft.Page):
     permissions = ft.PermissionHandler()
     page.overlay.append(permissions)
     routes(page)
-
     get_theme_mode(page)
-
     get_token(page)
     user_online(page)
-
     page.adaptive = True
     page.update()
 

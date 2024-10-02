@@ -1,7 +1,6 @@
 import json
 import websockets
-
-from api.api_client import APIClient
+from Profile.api_profile import APIProfile
 
 
 class UserOnline:
@@ -43,7 +42,7 @@ async def handle_websocket(websocket_handler):
 async def set_user_online(page):
     token = page.client_storage.get("token")
     if token:
-        response = APIClient().get_user_profile(token)
+        response = APIProfile().get_user_profile(token)
         user_id = response.json().get("id")
         websocket_handler = UserOnline(token, user_id=user_id)
         await handle_websocket(websocket_handler)
