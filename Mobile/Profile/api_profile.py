@@ -21,3 +21,15 @@ class APIProfile:
         headers = {'Authorization': f'Bearer {token}'}
         response = requests.post(url, data=data, headers=headers)
         return response
+
+    def his_profile(self, token, user_id):
+        url = f'{self.BASE_URL}/his-profile/{user_id}/'
+        headers = {'Authorization': f'Bearer {token}'}
+        response = requests.get(url, headers=headers)
+        return response
+
+    def following_user(self, token):
+        url = f'{self.BASE_URL}/following-user'
+        headers = {'Authorization': f'Bearer {token}'}
+        response = requests.post(url, headers=headers)
+        return response

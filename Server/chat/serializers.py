@@ -42,7 +42,7 @@ class ChatMessageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ChatMessage
-        fields = 'id', 'chat_room', 'sender', 'message', 'date', 'seen'
+        fields = ['id', 'chat_room', 'sender', 'message', 'date', 'seen']
 
     def get_chat_room(self, obj):
         user = self.context['request'].user

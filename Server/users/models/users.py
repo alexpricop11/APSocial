@@ -33,9 +33,9 @@ class Users(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=False, blank=True, null=True)
     phone_number = models.CharField(max_length=15, blank=True, null=True)
     birthday = models.DateField(null=True, blank=True)
-    my_followers = models.IntegerField(default=0)
-    follow = models.IntegerField(default=0)
+    following = models.ManyToManyField('self', symmetrical=False, related_name='followers', blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
     reset_code = models.CharField(max_length=10, blank=True, null=True)
     reset_code_expiry = models.DateTimeField(blank=True, null=True)
 

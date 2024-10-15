@@ -69,13 +69,17 @@ class Register(ft.UserControl):
         email_valid = self.is_valid_email(self.user_email.value) if self.user_email.value else True
         phone_valid = self.is_valid_number(self.phone_number.value) if self.phone_number.value else True
         password_valid = len(self.user_pass.value) >= 6 if self.user_pass.value else False
-        birthday_valid = self.valid_birthday(self.birthday.value) if self.birthday.value else False
+        birthday_valid = self.valid_birthday(self.birthday.value) if self.birthday.value else True
         self.register_button.disabled = not all(
             [self.username.value, self.user_pass.value, password_valid, email_valid, phone_valid, birthday_valid])
         self.update()
 
     def build(self):
-        return ft.Column(
-            [self.username, self.user_pass, self.phone_number, self.user_email, self.birthday,
-             self.register_button], alignment=ft.MainAxisAlignment.CENTER,
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER)
+        return ft.Container(
+            content=ft.Column(
+                [self.username, self.user_pass, self.phone_number, self.user_email, self.birthday,
+                 self.register_button],
+                alignment=ft.MainAxisAlignment.CENTER,
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER
+            ),
+        )

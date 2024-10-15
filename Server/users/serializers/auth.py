@@ -2,6 +2,8 @@ from django.contrib.auth import authenticate
 from rest_framework import serializers
 from users.models.users import Users
 
+from users.models.user_online import UserOnline
+
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(min_length=6, write_only=True)

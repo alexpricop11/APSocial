@@ -1,11 +1,5 @@
-from Home.user_online import set_user_online
-from Profile.api_profile import APIProfile
-import asyncio
 import flet as ft
-
-
-def user_online(page):
-    asyncio.run(set_user_online(page))
+from Profile.api_profile import APIProfile
 
 
 def get_theme_mode(page):
@@ -38,3 +32,9 @@ def show_dialog(page, title, content):
     page.dialog = ft.AlertDialog(title=ft.Text(title), content=content)
     page.dialog.open = True
     page.update()
+
+
+def handle_file_pick(page, event: ft.FilePickerResultEvent, user_profile):
+    if event.files:
+        user_profile.profile_photo = event.files[0].name
+        print(user_profile.profile_photo)

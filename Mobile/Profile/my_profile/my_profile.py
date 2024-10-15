@@ -16,8 +16,8 @@ class MyProfile(ft.UserControl):
         self.profile_photo = None
         self.username = None
         self.online = None
-        self.my_followers = 0
-        self.follow = 0
+        self.followers_count = None
+        self.following_count = None
         self.birthday = None
         self.email = None
         self.phone_number = None
@@ -46,8 +46,8 @@ class MyProfile(ft.UserControl):
             self.online = data.get('online')
             self.birthday = self.format_date(data.get('birthday')) if data.get('birthday') else ''
             self.email = data.get('email')
-            self.my_followers = data.get('my_followers', 0)
-            self.follow = data.get('follow', 0)
+            self.followers_count = data.get('followers_count')
+            self.following_count = data.get('following_count')
         else:
             show_snackbar(self.page, response.json().get('error'), 'red')
 

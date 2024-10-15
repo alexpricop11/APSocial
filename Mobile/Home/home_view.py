@@ -1,11 +1,9 @@
+from Profile.my_profile.my_profile import MyProfile
+from Notification.notification import Notification
 from Chat.chat_list import ChatList
+from Search.search import Search
 from .home_page import HomePage
 import flet as ft
-from Notification.notification import Notification
-
-from Search.search import Search
-
-from Profile.my_profile.my_profile import MyProfile
 
 
 class HomeView(ft.View):

@@ -1,7 +1,7 @@
 from django.db.models import Max
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
@@ -11,8 +11,8 @@ from chat.serializers import ChatRoomSerializer, ChatMessageSerializer, EditChat
 
 
 class ChatRoomView(APIView):
-    permission_classes = [IsAuthenticated]
-    authentication_classes = [JSONWebTokenAuthentication]
+    permission_classes = [AllowAny]
+    # authentication_classes = [JSONWebTokenAuthentication]
     serializer_class = ChatRoomSerializer
 
     def get(self, request):
