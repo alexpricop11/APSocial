@@ -4,8 +4,8 @@ from .views import auth, password, profile, users_block, search_user, user_follo
 urlpatterns = [
     path('register', auth.Register.as_view()),
     path('login', auth.Login.as_view()),
-    path('user-profile', profile.MyProfile.as_view()),
-    path('his-profile/<uuid:user_id>/', profile.OtherProfile.as_view()),
+    path('profile', profile.ProfileView.as_view()),
+    path('profile/<uuid:user_id>/', profile.ProfileView.as_view()),
     path('edit-profile', profile.EditProfile.as_view()),
     path('change-password', password.change_password),
     path('reset-password', password.reset_password),

@@ -1,3 +1,4 @@
+from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -8,12 +9,13 @@ from chat.serializers import ChatMessageSerializer
 
 
 @api_view(['GET'])
-@permission_classes([AllowAny])
-# @authentication_classes([JSONWebTokenAuthentication])
+@permission_classes([IsAuthenticated])
+@authentication_classes([JSONWebTokenAuthentication])
 def chat_message(request, chat_id):
-    chat_room = ChatRoom.objects.get(users=request.user, id=chat_id)
-    if chat_room is None:
-        return Response({'error': 'Chat room not found'}, status=status.HTTP_404_NOT_FOUND)
-    chat_messages = ChatMessage.objects.filter(chat_room=chat_room).order_by('date')
-    serializer = ChatMessageSerializer(chat_messages, many=True, context={'request': request})
-    return Response(serializer.data, status=status.HTTP_200_OK)
+    try:
+        chat_room = ChatRoom.objects.filter(id=chat_id, users__in=[request.user]).distinct().first()
+        chat_messages = ChatMessage.objects.filter(chat_room=chat_room).order_by('date')
+        serializer = ChatMessageSerializer(chat_messages, many=True, context={'request': request})
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except ObjectDoesNotExist:
+        return Response([], status=status.HTTP_404_NOT_FOUND)

@@ -28,8 +28,8 @@ class APIProfile:
         response = requests.get(url, headers=headers)
         return response
 
-    def following_user(self, token):
+    def following_user(self, token, data):
         url = f'{self.BASE_URL}/following-user'
         headers = {'Authorization': f'Bearer {token}'}
-        response = requests.post(url, headers=headers)
+        response = requests.post(url, headers=headers, data=data)
         return response

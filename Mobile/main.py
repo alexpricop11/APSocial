@@ -7,7 +7,10 @@ import flet as ft
 
 def main(page: ft.Page):
     page.title = 'APSocial'
+    page.icon = "assets/APSocial.png"
     page.scroll = ft.ScrollMode.AUTO
+    page.window.height = 700
+    page.window.width = 350
     permissions = ft.PermissionHandler()
     page.overlay.append(permissions)
     routes(page)
@@ -20,3 +23,4 @@ def main(page: ft.Page):
 
 if __name__ == '__main__':
     ft.app(target=main, assets_dir="assets", upload_dir="uploads")
+

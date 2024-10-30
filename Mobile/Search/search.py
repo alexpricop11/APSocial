@@ -11,7 +11,7 @@ class Search(ft.UserControl):
         self.api = APISearchUser()
         self.token = None
         self.user_search = ft.SearchBar(
-            bar_hint_text="Caută...",
+            bar_hint_text="Caută prieteni...",
             on_change=self.search
         )
         self.results_container = ft.Column()

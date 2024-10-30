@@ -6,7 +6,7 @@ class APIChat:
 
     def chat_room(self, token):
         url = f'{self.BASE_URL}/chat-room'
-        headers = {'Authorization': f'Bearer {token}'}
+        headers = {"Authorization": f"Bearer {token}"}
         response = requests.get(url, headers=headers)
         return response
 
@@ -32,4 +32,13 @@ class APIChat:
         url = f'{self.BASE_URL}/block-user'
         headers = {'Authorization': f'Bearer {token}'}
         response = requests.post(url, headers=headers, data=data)
+        return response
+
+    def create_chat(self, token, data):
+        url = f'{self.BASE_URL}/create-chat'
+        headers = {
+            'Authorization': f'Bearer {token}',
+            'Content-Type': 'application/json'
+        }
+        response = requests.post(url, headers=headers, json=data)
         return response

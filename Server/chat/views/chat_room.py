@@ -6,13 +6,13 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 
-from chat.models import ChatRoom, ChatMessage, UserChatName
-from chat.serializers import ChatRoomSerializer, ChatMessageSerializer, EditChatNameSerializer
+from chat.models import ChatRoom
+from chat.serializers import ChatRoomSerializer, ChatMessageSerializer
 
 
-class ChatRoomView(APIView):
-    permission_classes = [AllowAny]
-    # authentication_classes = [JSONWebTokenAuthentication]
+class ChatList(APIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JSONWebTokenAuthentication]
     serializer_class = ChatRoomSerializer
 
     def get(self, request):
@@ -20,8 +20,11 @@ class ChatRoomView(APIView):
         chat_rooms = ChatRoom.objects.filter(users__in=[current_user]).annotate(
             last_message_date=Max('chatmessage__date')
         ).order_by('-last_message_date')
-        serializer = self.serializer_class(chat_rooms, many=True, context={'request': request})
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        if chat_rooms:
+            serializer = self.serializer_class(chat_rooms, many=True, context={'request': request})
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response([], status.HTTP_404_NOT_FOUND)
 
 
 @api_view(['DELETE'])
@@ -39,10 +42,4 @@ def delete_chat(request, chat_id):
 @permission_classes([IsAuthenticated])
 @authentication_classes([JSONWebTokenAuthentication])
 def edit_chat_name(request, chat_id):
-    chat_room = ChatRoom.objects.get(id=chat_id)
-    custom_name, created = UserChatName.objects.get_or_create(users=request.user, chat_room=chat_room)
-    serializer = EditChatNameSerializer(custom_name, data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    ...

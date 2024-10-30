@@ -1,8 +1,7 @@
 from django.contrib.auth import authenticate
 from rest_framework import serializers
 from users.models.users import Users
-
-from users.models.user_online import UserOnline
+from users.services.user_service import UserService
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
@@ -15,14 +14,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         fields = ['username', 'password', 'email', 'phone_number', 'birthday']
 
     def create(self, validated_data):
-        user = Users(
-            username=validated_data['username'],
-            email=validated_data.get('email', None),
-            phone_number=validated_data.get('phone_number', None),
-            birthday=validated_data.get('birthday', None))
-        user.set_password(validated_data['password'])
-        user.save()
-        return user
+        return UserService.register_user(validated_data)
 
 
 class UserLoginSerializer(serializers.Serializer):
@@ -35,4 +27,4 @@ class UserLoginSerializer(serializers.Serializer):
         user = authenticate(username=username, password=password)
         if not user:
             raise serializers.ValidationError("Invalid username or password")
-        return data
+        return user

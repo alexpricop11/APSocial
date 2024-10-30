@@ -53,10 +53,12 @@ class OtherProfileSerializer(serializers.ModelSerializer):
     following_count = serializers.SerializerMethodField()
     followers = serializers.SerializerMethodField()
     following = serializers.SerializerMethodField()
+    is_follow = serializers.SerializerMethodField()
 
     class Meta:
         model = Users
-        fields = ['id', 'profile_image', 'username', 'followers_count', 'following_count', 'followers', 'following']
+        fields = ['id', 'profile_image', 'username', 'followers_count', 'following_count', 'followers', 'following',
+                  'is_follow']
 
     @staticmethod
     def get_followers_count(user):
@@ -73,3 +75,9 @@ class OtherProfileSerializer(serializers.ModelSerializer):
     @staticmethod
     def get_following(user):
         return [following_user.username for following_user in user.following.all()]
+
+    def get_is_follow(self, user):
+        request = self.context.get('request')
+        if request and request.user.following.filter(id=user.id).exists():
+            return True
+        return False

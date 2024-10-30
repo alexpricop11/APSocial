@@ -13,8 +13,6 @@ class FollowingUser(APIView):
     def post(self, request):
         user_id = request.data.get('user_id')
         user_to_follow = Users.objects.get(id=user_id)
-        if request.user == user_to_follow:
-            return Response({"error": "You cannot follow yourself."}, status=status.HTTP_400_BAD_REQUEST)
         if request.user.following.filter(id=user_to_follow.id).exists():
             request.user.following.remove(user_to_follow)
             return Response({"message": "User unfollowed successfully."}, status=status.HTTP_200_OK)

@@ -36,7 +36,9 @@ class Register(ft.UserControl):
     def success_register(self, response):
         response_data = response.json()
         token = response_data.get("token")
+        user_id = response_data.get("user_id")
         self.page.client_storage.set("token", token)
+        self.page.client_storage.set('user_id', user_id)
         self.page.go('/home')
 
     def failed_register(self, response):

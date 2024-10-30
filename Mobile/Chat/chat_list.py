@@ -23,8 +23,10 @@ class ChatList(ft.UserControl):
         response = self.api.chat_room(self.token)
         if response.status_code == 200:
             self.chats = response.json()
+        elif response.status_code == 404:
+            self.chats = []
         else:
-            self.page.go('/auth')
+            pass
 
     def create_on_click_handler(self, chat_id):
         return lambda e: self.open_chat(chat_id)
@@ -38,7 +40,8 @@ class ChatList(ft.UserControl):
                 leading=ft.Icon(ft.icons.PERSON, size=38, color=ft.colors.WHITE),
                 title=ft.Text(chat.get('name'), size=20, weight=ft.FontWeight.BOLD, color=ft.colors.WHITE),
                 subtitle=ft.Text(
-                    chat.get('last_message', '')[:20] + '...' if len(chat.get('last_message', '')) > 20 else chat.get(
+                    chat.get('last_message', '')[:20] + '...' if chat.get('last_message') and len(
+                        chat.get('last_message', '')) > 20 else chat.get(
                         'last_message', ''),
                     size=14,
                     color=ft.colors.GREY_500),
