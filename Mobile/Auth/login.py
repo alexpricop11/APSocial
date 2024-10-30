@@ -25,7 +25,6 @@ class Login(ft.UserControl):
     def success_login(self, response):
         token = response.json().get("token")
         user_id = response.json().get("user_id")
-        print(user_id)
         if self.page:
             self.page.client_storage.set("token", token)
             self.page.client_storage.set("user_id", user_id)

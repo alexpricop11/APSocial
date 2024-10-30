@@ -29,7 +29,7 @@ def show_snackbar(page, message, color):
 
 
 def show_dialog(page, title, content):
-    page.dialog = ft.AlertDialog(title=ft.Text(title), content=content)
+    page.dialog = ft.AlertDialog(title=ft.Text(title.value), content=content)
     page.dialog.open = True
     page.update()
 
@@ -37,4 +37,3 @@ def show_dialog(page, title, content):
 def handle_file_pick(page, event: ft.FilePickerResultEvent, user_profile):
     if event.files:
         user_profile.profile_photo = event.files[0].name
-        print(user_profile.profile_photo)

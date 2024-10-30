@@ -18,6 +18,8 @@ class MyProfile(ft.UserControl):
         self.online = None
         self.followers_count = None
         self.following_count = None
+        self.followers = []
+        self.following = []
         self.birthday = None
         self.email = None
         self.phone_number = None
@@ -48,6 +50,8 @@ class MyProfile(ft.UserControl):
             self.email = data.get('email')
             self.followers_count = data.get('followers_count')
             self.following_count = data.get('following_count')
+            self.followers = data.get('followers')
+            self.following = data.get('following')
         else:
             show_snackbar(self.page, response.json().get('error'), 'red')
 
