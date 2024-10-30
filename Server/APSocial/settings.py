@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     'channels',
     'users',
     'chat',
+    'notification',
 ]
 
 ASGI_APPLICATION = "APSocial.asgi.application"
