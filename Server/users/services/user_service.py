@@ -3,7 +3,6 @@ from django.db import transaction
 from users.models import Users
 from rest_framework_jwt.settings import api_settings
 from django.core.exceptions import ValidationError
-
 from users.logic import get_user_email, password_reset
 
 JWT_PAYLOAD_HANDLER = api_settings.JWT_PAYLOAD_HANDLER
@@ -11,6 +10,7 @@ JWT_ENCODE_HANDLER = api_settings.JWT_ENCODE_HANDLER
 
 
 class UserService:
+
     @staticmethod
     @transaction.atomic
     def register_user(validated_data):

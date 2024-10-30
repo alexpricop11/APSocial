@@ -5,7 +5,7 @@ class APIProfile:
     BASE_URL = 'http://127.0.0.1:8000'
 
     def get_user_profile(self, token):
-        url = f'{self.BASE_URL}/user-profile'
+        url = f'{self.BASE_URL}/profile'
         headers = {'Authorization': f'Bearer {token}'}
         response = requests.get(url, headers=headers)
         return response
@@ -23,7 +23,7 @@ class APIProfile:
         return response
 
     def his_profile(self, token, user_id):
-        url = f'{self.BASE_URL}/his-profile/{user_id}/'
+        url = f'{self.BASE_URL}/profile/{user_id}/'
         headers = {'Authorization': f'Bearer {token}'}
         response = requests.get(url, headers=headers)
         return response
