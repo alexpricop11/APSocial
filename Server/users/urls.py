@@ -12,6 +12,9 @@ urlpatterns = [
     path('verify-code', password.verify_reset_code),
     path('block-user', users_block.blocked_users),
     path('search-user/<str:user>/', search_user.search_user),
+    path('history-search', search_user.get_history),
+    path('save-user', search_user.save_user_in_history),
+    path('delete-user', search_user.delete_user_from_history),
     path('following-user', user_follow.FollowingUser.as_view())
 
 ]

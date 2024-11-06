@@ -4,8 +4,9 @@ from users.models import Users
 
 class Notification(models.Model):
     user = models.ForeignKey(Users, on_delete=models.CASCADE)
-    content = models.CharField(max_length=85)
+    type = models.CharField(max_length=50)
     message = models.TextField()
+    is_read = models.BooleanField(default=False)
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

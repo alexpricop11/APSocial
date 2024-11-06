@@ -22,7 +22,7 @@ class ProfileView(APIView):
             target_user = get_object_or_404(Users, id=user_id)
             profile_data = ProfileService.get_other_profile(request, target_user)
         else:
-            profile_data = ProfileService.get_user_profile(request.user)
+            profile_data = ProfileService(request.user).get_user_profile()
         return Response(profile_data, status=status.HTTP_200_OK)
 
 
@@ -34,7 +34,7 @@ class EditProfile(APIView):
     @staticmethod
     def put(request):
         try:
-            result = ProfileService(request.user, request.data)
+            result = ProfileService(request.user).update_user_profile(request.data)
             return Response(result, status=status.HTTP_200_OK)
         except ValidationError as e:
             return Response({'errors': e.detail}, status=status.HTTP_400_BAD_REQUEST)
