@@ -14,22 +14,6 @@ class NotificationService:
     @staticmethod
     def create_notification(user, notification_type, message):
         notification = Notification.objects.create(user=user, type=notification_type, message=message)
-
-        channel_layer = get_channel_layer()
-        async_to_sync(channel_layer.group_send)(
-            f"notifications_{user.id}",
-            {
-                "type": "send_notification",
-                "notification": {
-                    "id": notification.id,
-                    "user": user.id,
-                    "type": notification_type,
-                    "message": message,
-                    "is_read": notification.is_read,
-                    "timestamp": str(notification.timestamp),
-                },
-            }
-        )
         return notification
 
     @staticmethod
