@@ -47,6 +47,7 @@ class Search(ft.UserControl):
             ))
 
     def open_his_profile(self, user_id):
+        print(user_id)
         self.save_history(user_id)
         self.user_id = user_id
         his_profile = HisProfile(self.token, self.user_id)
@@ -68,18 +69,21 @@ class Search(ft.UserControl):
     def success_get_history(self, history_data):
         if history_data:
             self.results_container.controls.extend([
-                ft.ListTile(
-                    title=ft.Text(item['searched_user']),
-                    trailing=ft.IconButton(
-                        icon=ft.icons.CLOSE,
-                        icon_size=30,
-                        on_click=lambda _, user=item['searched_user']: self.remove_from_history(user)
-                    ),
-                    on_click=lambda _, user_id=item['id']: self.open_his_profile(self.user_id)
-                ) for item in history_data
+                self.create_history_tile(item) for item in history_data
             ])
         else:
             self.results_container.controls.append(ft.Text("No search history available.", size=16))
+
+    def create_history_tile(self, item):
+        return ft.ListTile(
+            title=ft.Text(item['searched_user']['username']),
+            trailing=ft.IconButton(
+                icon=ft.icons.CLOSE,
+                icon_size=30,
+                on_click=lambda _, user=item['searched_user']: self.remove_from_history(user)
+            ),
+            on_click=lambda _, user_id=item['searched_user']['user_id']: self.open_his_profile(user_id)
+        )
 
     def remove_from_history(self, user):
         response = self.api.delete_user_from_history(self.token, user)

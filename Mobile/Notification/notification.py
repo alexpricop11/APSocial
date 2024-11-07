@@ -44,7 +44,6 @@ class Notification(ft.UserControl):
 
     @staticmethod
     def create_notification_item(notif):
-        # Format each notification item
         return ft.Container(
             content=ft.Column(
                 [
@@ -53,8 +52,6 @@ class Notification(ft.UserControl):
                 ]
             ),
             padding=10,
-            border=ft.border.all(1, ft.colors.GREY),
-            margin=5
         )
 
     def update_ui(self, notifications):

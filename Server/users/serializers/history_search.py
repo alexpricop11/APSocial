@@ -12,4 +12,7 @@ class HistorySerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_searched_user(obj):
-        return obj.searched_user.username
+        return {
+            'user_id': obj.searched_user.id,
+            'username': obj.searched_user.username
+        }
