@@ -1,13 +1,12 @@
 <script setup>
-
+import HomePage from "@/components/home/HomePage.vue";
 </script>
 
 <template>
   <div id="app">
-    <router-view/>
+    <HomePage />
   </div>
 </template>
-
 
 <style>
 body {

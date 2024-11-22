@@ -2,7 +2,7 @@
   <div class="auth-page">
     <div class="auth-buttons">
       <button @click="showForm('register')" :class="{ active: activeForm === 'register' }">Înregistrare</button>
-      <button @click="showForm('login')" :class="{ active: activeForm === 'login' }">Logare</button>
+      <button @click="showForm('login')" :class="{ active: activeForm === 'login' }">Login</button>
     </div>
     <div class="auth-form">
       <RegisterForm v-if="activeForm === 'register'" />
