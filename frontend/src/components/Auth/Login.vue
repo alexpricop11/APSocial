@@ -2,42 +2,64 @@
   <form @submit.prevent="loginUser">
     <div class="form-group">
       <input type="text" v-model="form.username" placeholder="Numele" required>
+      <div v-if="errors.username" class="error-message">{{ errors.username }}</div>
     </div>
 
     <div class="form-group password-group">
       <input :type="showPassword ? 'text' : 'password'" v-model="form.password" placeholder="Parola" required>
       <button type="button" class="eye-button" @click="showPassword = !showPassword">👁</button>
+      <div v-if="errors.password" class="error-message">{{ errors.password }}</div>
+    </div>
+
+    <div class="reset-password">
+      <button type="button" class="reset-link" @click="goToResetPassword">Ai uitat parola?</button>
     </div>
 
     <button type="submit" class="submit-button">Login</button>
+
+    <!-- Afișăm mesajul de eroare global, dacă există -->
+    <div v-if="generalError" class="error-message">{{ generalError }}</div>
   </form>
 </template>
 
 <script setup>
-import {ref} from 'vue'
+import {ref} from 'vue';
 import apiClient from "@/services/api.js";
 import router from "@/router/routing.js";
 
-const showPassword = ref(false)
+const showPassword = ref(false);
 const form = ref({
   username: '',
   password: ''
-})
+});
 const errors = ref({});
+const generalError = ref('');
 
 const loginUser = async () => {
   errors.value = {};
+  generalError.value = '';
   try {
     const response = await apiClient.post('/auth/login', form.value);
     localStorage.setItem('token', response.data.token);
-    await router.push('/')
+    await router.push('/');
   } catch (error) {
     if (error.response && error.response.data) {
-      errors.value = error.response.data.detail;
+      if (error.response.data.detail) {
+        generalError.value = error.response.data.detail;
+      } else {
+        errors.value = error.response.data;
+      }
+    } else if (error.message) {
+      generalError.value = error.message;
     } else {
-      console.error('Login error:', error);
+      generalError.value = 'A apărut o eroare necunoscută.';
     }
+    console.error('Login error:', error);
   }
+};
+
+const goToResetPassword = () => {
+  router.push('/reset-password');
 };
 </script>
 
@@ -95,4 +117,26 @@ input:focus {
   transition: background-color 0.2s;
 }
 
+.reset-password {
+  margin-bottom: 0.5rem;
+  text-align: end;
+}
+
+.reset-link {
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 1rem;
+  background-color: green;
+}
+
+.reset-link:hover {
+  text-decoration: underline;
+}
+
+/* Stilizarea pentru mesajele de eroare */
+.error-message {
+  color: red;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+}
 </style>

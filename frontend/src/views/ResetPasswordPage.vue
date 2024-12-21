@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <h2>Acasa</h2>
+  <h2>Reset</h2>
 </template>
 
 <style scoped>
