@@ -41,6 +41,7 @@ const loginUser = async () => {
   try {
     const response = await apiClient.post('/auth/login', form.value);
     localStorage.setItem('token', response.data.token);
+    console.log(response);
     await router.push('/');
   } catch (error) {
     if (error.response && error.response.data) {

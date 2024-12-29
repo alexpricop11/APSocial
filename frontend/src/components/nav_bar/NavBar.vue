@@ -1,20 +1,26 @@
 <script setup>
-import { useRouter } from 'vue-router';
+import {useRouter, useRoute} from 'vue-router';
 
 const router = useRouter();
+const route = useRoute();
 const menuItems = [
-  { name: 'Acasă', icon: 'home', path: '/' },
-  { name: 'Profil', icon: 'person', path: '/profile' },
+  {name: 'Acasă', icon: 'home', path: '/'},
+  {name: 'Caută', icon: 'search', path: '/search'},
+  {name: 'Chat', icon: 'chat_bubble', path: '/chat'},
+  {name: 'Notificări', icon: 'notifications', path: '/notifications'},
+  {name: 'Profil', icon: 'person', path: '/profile'},
 ];
+
+const isActive = (path) => route.path === path;
 </script>
 
 <template>
   <div class="navigation-bar">
     <div
-      v-for="(item, index) in menuItems"
-      :key="index"
-      class="nav-item"
-      @click="router.push(item.path)"
+        v-for="(item, index) in menuItems"
+        :key="index"
+        :class="['nav-item', { active: isActive(item.path) }]"
+        @click="router.push(item.path)"
     >
       <span class="material-icons">{{ item.icon }}</span>
       <span class="label">{{ item.name }}</span>
@@ -49,7 +55,7 @@ const menuItems = [
   transition: color 0.3s;
 }
 
-.nav-item:hover {
+.nav-item.active {
   color: #1ae11a;
 }
 

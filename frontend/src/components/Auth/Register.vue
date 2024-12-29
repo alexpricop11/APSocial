@@ -17,7 +17,7 @@
     </div>
 
     <div class="form-group">
-      <input type="text" v-model="form.birthday" placeholder="Data de naștere">
+      <input type="date" v-model="form.birthday" placeholder="Data de naștere">
     </div>
 
     <button type="submit" class="submit-button">Înregistrează-te</button>
