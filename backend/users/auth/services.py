@@ -38,7 +38,7 @@ class AuthServices:
             await self.db.commit()
             await self.db.refresh(new_user)
 
-            access_token = create_access_token(data={"sub": new_user.username})
+            access_token = create_access_token(data={"sub": new_user})
 
             return {
                 "message": "User registered successfully",
@@ -56,5 +56,5 @@ class AuthServices:
         if db_user is None or not pwd_context.verify(user.password, db_user.password):
             raise HTTPException(status_code=401, detail="Invalid username or password")
 
-        token = create_access_token(data={"sub": user.username})
+        token = create_access_token(data={"sub": user})
         return {"token": token, "token_type": "bearer"}

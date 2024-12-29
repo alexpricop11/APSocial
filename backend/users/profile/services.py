@@ -1,6 +1,8 @@
 from uuid import UUID
-
-from fastapi import HTTPException
+import base64
+from PIL import Image
+from io import BytesIO
+from fastapi import HTTPException, UploadFile
 from passlib.context import CryptContext
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
@@ -39,18 +41,24 @@ class UserProfileServices:
             raise HTTPException(status_code=500, detail=f"Failed to update profile: {str(ex)}")
         return UserProfile.from_orm(user)
 
-    async def update_profile_image(self, user_id: UUID, image: bytes):
-        query = select(Users).where(user_id == Users.id)
-        result = await self.db.execute(query)
-        user = result.scalar_one_or_none()
-        if user is None:
-            raise HTTPException(status_code=400, detail="User not found")
-        user.profile_image = image
+    async def update_profile_image(self, user_id: UUID, image: UploadFile):
         try:
+            contents = await image.read()
+            if len(contents) > 5 * 1024 * 1024:
+                raise HTTPException(status_code=400, detail="Image too large")
+            base64_str = base64.b64encode(contents).decode('utf-8')
+            mime_type = image.content_type or 'image/png'
+            image_url = f"data:{mime_type};base64,{base64_str}"
+            query = select(Users).where(user_id == Users.id)
+            result = await self.db.execute(query)
+            user = result.scalar_one_or_none()
+            if not user:
+                raise HTTPException(status_code=404, detail="User not found")
+            user.profile_image = image_url
+            self.db.add(user)
             await self.db.commit()
             await self.db.refresh(user)
-        except Exception as ex:
+            return UserProfile.from_orm(user)
+        except Exception as e:
             await self.db.rollback()
-            raise HTTPException(status_code=500, detail=f"Failed to update profile image: {str(ex)}")
-        return UserProfile.from_orm(user)
-
+            raise HTTPException(status_code=500, detail=f"Failed to update profile image: {str(e)}")

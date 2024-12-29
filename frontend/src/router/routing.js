@@ -1,7 +1,7 @@
 import {createRouter, createWebHistory} from 'vue-router';
 import AuthPage from "@/views/AuthPage.vue";
 import HomeView from "@/views/HomeView.vue";
-import HomePage from "@/components/HomeView/HomePage.vue";
+import HomePage from "@/components/Home/HomePage.vue";
 import Profile from "@/components/Profile/Profile.vue";
 import Search from "@/components/Search.vue";
 import Chat from "@/components/Chat.vue";
@@ -11,6 +11,7 @@ import ChangePassword from "@/components/Settings/ChangePassword.vue";
 import EditProfile from "@/components/Settings/EditProfile.vue";
 import ResetPassword from "@/components/Auth/ResetPassword.vue";
 import ConfirmResetPassword from "@/components/Auth/ConfirmResetPassword.vue";
+import ImageProfilUpload from "@/components/Settings/ImageProfilUpload.vue";
 
 const router = createRouter({
     history: createWebHistory(),
@@ -30,6 +31,7 @@ const router = createRouter({
         {path: '/settings', component: Settings},
         {path: '/change-password', component: ChangePassword},
         {path: '/edit-profile', component: EditProfile},
+        {path: '/change-profile-image', component: ImageProfilUpload},
     ]
 });
 

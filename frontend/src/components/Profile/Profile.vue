@@ -7,6 +7,7 @@
             :src="profile.profile_image"
             alt="Profile Image"
             class="profile-image"
+            @click="showModal = true"
         />
         <span v-else class="material-icons profile-icon">person</span>
       </div>
@@ -20,18 +21,27 @@
         </router-link>
       </div>
     </div>
+
+    <div v-if="showModal" class="modal-overlay" @click="showModal = false">
+      <div class="modal-content" @click.stop>
+        <img
+            :src="profile.profile_image"
+            alt="Profile Image"
+            class="modal-image"
+        />
+      </div>
+    </div>
   </div>
 </template>
-
-
 <script>
+
 import apiClient from "@/services/api.js";
 
 export default {
-  components: {},
   data() {
     return {
-      profile: null
+      profile: null,
+      showModal: false,
     };
   },
   created() {
@@ -41,7 +51,7 @@ export default {
     async getProfile() {
       try {
         const response = await apiClient.get('/profile');
-        this.profile = await response.data;
+        this.profile = response.data;
       } catch (error) {
         console.error(error);
       }
@@ -52,6 +62,39 @@ export default {
 
 <style scoped>
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  position: relative;
+  max-width: 100%;
+  max-height: 100%;
+  overflow: hidden;
+  background: #fff;
+  border-radius: 10px;
+}
+
+.modal-image {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  border-radius: 10px;
+}
+
+.modal-overlay:hover {
+  cursor: pointer;
+}
 
 .profile-container {
   display: flex;

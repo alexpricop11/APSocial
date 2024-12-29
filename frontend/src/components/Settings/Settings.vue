@@ -32,6 +32,9 @@ export default {
         case "editProfile":
           router.push('/edit-profile')
           break;
+        case "changeProfileImage":
+          router.push('/change-profile-image');
+          break;
         case "logout":
           router.push("/auth");
           localStorage.removeItem('token');
