@@ -18,6 +18,6 @@ class UserProfile(BaseModel):
 
 class EditProfile(BaseModel):
     username: Optional[str]
-    email: Optional[EmailStr]
-    phone_number: Optional[str] = Field(None, pattern=r"^\+?\d{9,15}$")
+    email: Optional[str]
+    phone_number: Optional[str]
     birthday: Optional[date]

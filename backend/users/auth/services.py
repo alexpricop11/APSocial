@@ -56,5 +56,5 @@ class AuthServices:
         if db_user is None or not pwd_context.verify(user.password, db_user.password):
             raise HTTPException(status_code=401, detail="Invalid username or password")
 
-        token = create_access_token({"sub": db_user.username})
-        return {"access_token": token, "token_type": "bearer"}
+        token = create_access_token(data={"sub": user.username})
+        return {"token": token, "token_type": "bearer"}

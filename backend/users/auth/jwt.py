@@ -1,10 +1,9 @@
-from fastapi import HTTPException, Depends
 from datetime import datetime, timedelta
+from typing import Optional
 
+from fastapi import HTTPException, Depends
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
-from typing import Optional, Dict, Any
-
 from sqlalchemy.future import select
 
 from database.database import AsyncSession, get_db
