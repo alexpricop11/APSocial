@@ -3,12 +3,13 @@ from uuid import uuid4
 
 from sqlalchemy import Column, String, DateTime, Date, Text
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import relationship
 
 from database.database import Base
 
 
-class Users(Base):
-    __tablename__ = 'users'
+class User(Base):
+    __tablename__ = 'Users'
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4, unique=True, index=True)
     username = Column(String(255), unique=True, nullable=False)
@@ -18,3 +19,4 @@ class Users(Base):
     phone_number = Column(String(20), nullable=True)
     birthday = Column(Date, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
+

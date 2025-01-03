@@ -1,6 +1,6 @@
 from fastapi import HTTPException
 from users.auth.schemas import RegisterUser, LoginUser
-from users.models import Users
+from users.models import User
 from sqlalchemy.future import select
 from database.database import AsyncSession
 from uuid import uuid4
@@ -16,7 +16,7 @@ class AuthServices:
         self.db = db
 
     async def existing_user(self, username: str):
-        query = select(Users).where(username == Users.username)
+        query = select(User).where(username == User.username)
         result = await self.db.execute(query)
         user = result.scalar_one_or_none()
         return user
@@ -26,7 +26,7 @@ class AuthServices:
         if existing_user:
             raise HTTPException(status_code=400, detail="Username already exists.")
         try:
-            new_user = Users(
+            new_user = User(
                 id=uuid4(),
                 username=schemas.username,
                 password=pwd_context.hash(schemas.password),
@@ -38,7 +38,7 @@ class AuthServices:
             await self.db.commit()
             await self.db.refresh(new_user)
 
-            access_token = create_access_token(data={"sub": new_user})
+            access_token = create_access_token(data={"sub": new_user.username})
 
             return {
                 "message": "User registered successfully",
@@ -49,12 +49,13 @@ class AuthServices:
             raise HTTPException(status_code=500, detail=f"Failed to register user: {str(ex)}")
 
     async def login(self, user: LoginUser):
-        query = select(Users).where(user.username == Users.username)
+        query = select(User).where(user.username == User.username)
         result = await self.db.execute(query)
+
         db_user = result.scalar_one_or_none()
 
         if db_user is None or not pwd_context.verify(user.password, db_user.password):
             raise HTTPException(status_code=401, detail="Invalid username or password")
 
-        token = create_access_token(data={"sub": user})
+        token = create_access_token(data={"sub": db_user.username})
         return {"token": token, "token_type": "bearer"}

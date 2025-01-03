@@ -111,9 +111,13 @@ export default {
 .title {
   font-size: 1.5rem;
   font-weight: bold;
-  flex-grow: 1;
   text-align: center;
+  margin: 0 auto;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
 }
+
 
 .container {
   display: flex;

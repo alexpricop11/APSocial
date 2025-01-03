@@ -8,7 +8,7 @@ from sqlalchemy.future import select
 
 from database.database import AsyncSession, get_db
 from settings.settings import SECRET_KEY, ALGORITHM
-from users.models import Users
+from users.models import User
 
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
@@ -44,7 +44,7 @@ async def get_current_user(
         if username is None:
             raise HTTPException(status_code=401, detail="Token does not contain username")
 
-        query = select(Users).where(username == Users.username)
+        query = select(User).where(username == User.username)
         result = await db.execute(query)
         user = result.scalar_one_or_none()
         if user is None:

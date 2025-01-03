@@ -1,40 +1,44 @@
 <template>
-  <div class="profile-container">
-    <div class="image-profile">
-      <div class="profile-image-container">
+  <div class="flex items-center justify-between p-4 rounded-lg text-white">
+    <div class="flex justify-center items-center">
+      <div class="w-20 h-20 rounded-full overflow-hidden flex justify-center items-center">
         <img
-            v-if="profile && profile.profile_image"
-            :src="profile.profile_image"
-            alt="Profile Image"
-            class="profile-image"
-            @click="showModal = true"
+          v-if="profile && profile.profile_image"
+          :src="profile.profile_image"
+          alt="Profile Image"
+          class="w-full h-full object-cover rounded-full cursor-pointer"
+          @click="showModal = true"
         />
-        <span v-else class="material-icons profile-icon">person</span>
+        <span v-else class="material-icons text-6xl text-white">person</span>
       </div>
     </div>
 
-    <div class="info-user">
-      <div class="profile-username">{{ profile ? profile.username : '' }}</div>
-      <div class="settings-icon-container">
-        <router-link to="/settings">
-          <span class="material-icons settings-icon">settings</span>
-        </router-link>
-      </div>
+    <!-- User Info Section -->
+    <div class="flex-1 text-center mx-4">
+      <div class="text-3xl font-bold">{{ profile ? profile.username : '' }}</div>
     </div>
 
-    <div v-if="showModal" class="modal-overlay" @click="showModal = false">
-      <div class="modal-content" @click.stop>
+    <!-- Settings Icon Section -->
+    <div class="flex top-10 right-4 cursor-pointer">
+      <router-link to="/settings">
+        <span class="material-icons text-xl text-white">settings</span>
+      </router-link>
+    </div>
+
+    <!-- Modal Overlay -->
+    <div v-if="showModal" class="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50" @click="showModal = false">
+      <div class="relative max-w-full max-h-full bg-white rounded-lg" @click.stop>
         <img
-            :src="profile.profile_image"
-            alt="Profile Image"
-            class="modal-image"
+          :src="profile.profile_image"
+          alt="Profile Image"
+          class="w-full h-auto object-contain rounded-lg"
         />
       </div>
     </div>
   </div>
 </template>
-<script>
 
+<script>
 import apiClient from "@/services/api.js";
 
 export default {
@@ -59,108 +63,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
-
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.7);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.modal-content {
-  position: relative;
-  max-width: 100%;
-  max-height: 100%;
-  overflow: hidden;
-  background: #fff;
-  border-radius: 10px;
-}
-
-.modal-image {
-  width: 100%;
-  height: auto;
-  object-fit: contain;
-  border-radius: 10px;
-}
-
-.modal-overlay:hover {
-  cursor: pointer;
-}
-
-.profile-container {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-radius: 10px;
-  color: #ffffff;
-  position: relative;
-}
-
-.image-profile {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.profile-image-container {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.profile-image {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.profile-icon {
-  font-size: 48px;
-  color: #ffffff;
-}
-
-
-.info-user {
-  flex: 1;
-  text-align: center;
-  margin: 0 15px;
-}
-
-.profile-username {
-  font-size: 3rem;
-  font-weight: bold;
-  margin-bottom: 8px;
-}
-
-.profile-details p {
-  font-size: 3rem;
-  margin: 4px 0;
-}
-
-.settings-icon-container {
-  position: fixed;
-  top: 1.5rem;
-  right: 1rem;
-  cursor: pointer;
-}
-
-.settings-icon {
-  font-size: 30px;
-  color: #ffffff;
-}
-
-</style>

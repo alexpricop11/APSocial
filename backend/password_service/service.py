@@ -8,7 +8,7 @@ from sqlalchemy.future import select
 from password_service.functions import send_email
 from password_service.hash_password import hash_password
 from password_service.schemas import ChangePassword, ResetPassword, ResetPasswordConfirm
-from users.models import Users
+from users.models import User
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -18,7 +18,7 @@ class PasswordService:
         self.db = db
 
     async def change_password(self, user_id: UUID, password: ChangePassword):
-        query = select(Users).where(user_id == Users.id)
+        query = select(User).where(user_id == User.id)
         result = await self.db.execute(query)
         user = result.scalar_one_or_none()
         if user is None:
@@ -33,7 +33,7 @@ class PasswordService:
         await self.db.refresh(user)
 
     async def reset_password(self, request: ResetPassword):
-        query = select(Users).where(request.email == Users.email)
+        query = select(User).where(request.email == User.email)
         result = await self.db.execute(query)
         user = result.scalar_one_or_none()
         if not user:
@@ -46,7 +46,7 @@ class PasswordService:
         return {'message': "The code was sent successfully"}
 
     async def confirm_reset_password(self, request: ResetPasswordConfirm):
-        query = select(Users).where(request.email == Users.email)
+        query = select(User).where(request.email == User.email)
         result = await self.db.execute(query)
         user = result.scalar_one_or_none()
         if not user:

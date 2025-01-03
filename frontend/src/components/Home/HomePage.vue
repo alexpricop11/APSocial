@@ -1,15 +1,14 @@
 <template>
-  <div class="home">
-    <h1>Bine ai venit!</h1>
-    <p>Aceasta este pagina principală.</p>
+  <div class="flex items-center justify-center bg-gray-900 text-white min-h-screen">
+    <div class="text-center">
+      <h1 class="text-3xl font-bold mb-4">Bine ai venit!</h1>
+      <p class="text-lg">Aceasta este pagina principală.</p>
+    </div>
   </div>
 </template>
 
 <style scoped>
-.home {
-  padding: 20px;
-  text-align: center;
-  color: #fff;
-  min-height: calc(100vh - 60px);
+body {
+  height: 100vh;
 }
 </style>

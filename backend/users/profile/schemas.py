@@ -17,6 +17,7 @@ class UserProfile(BaseModel):
 
 
 class EditProfile(BaseModel):
+    profile_image: Optional[str] = None
     username: Optional[str]
     email: Optional[str]
     phone_number: Optional[str]

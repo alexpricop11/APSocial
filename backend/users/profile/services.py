@@ -7,7 +7,7 @@ from passlib.context import CryptContext
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
-from users.models import Users
+from users.models import User
 from users.profile.schemas import UserProfile, EditProfile
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -18,7 +18,7 @@ class UserProfileServices:
         self.db = db
 
     async def get_user_profile(self, user_id: UUID) -> UserProfile:
-        query = select(Users).where(user_id == Users.id)
+        query = select(User).where(user_id == User.id)
         result = await self.db.execute(query)
         user = result.scalar_one_or_none()
         if user is None:
@@ -26,7 +26,7 @@ class UserProfileServices:
         return UserProfile.from_orm(user)
 
     async def edit_profile(self, user_id: UUID, profile_data: EditProfile):
-        query = select(Users).where(user_id == Users.id)
+        query = select(User).where(user_id == User.id)
         result = await self.db.execute(query)
         user = result.scalar_one_or_none()
         if user is None:
@@ -47,9 +47,9 @@ class UserProfileServices:
             if len(contents) > 5 * 1024 * 1024:
                 raise HTTPException(status_code=400, detail="Image too large")
             base64_str = base64.b64encode(contents).decode('utf-8')
-            mime_type = image.content_type or 'image/png'
+            mime_type = image.content_type or 'images/png'
             image_url = f"data:{mime_type};base64,{base64_str}"
-            query = select(Users).where(user_id == Users.id)
+            query = select(User).where(user_id == User.id)
             result = await self.db.execute(query)
             user = result.scalar_one_or_none()
             if not user:
@@ -61,4 +61,4 @@ class UserProfileServices:
             return UserProfile.from_orm(user)
         except Exception as e:
             await self.db.rollback()
-            raise HTTPException(status_code=500, detail=f"Failed to update profile image: {str(e)}")
+            raise HTTPException(status_code=500, detail=f"Failed to update profile images: {str(e)}")

@@ -1,17 +1,29 @@
 <template>
-  <div class="container">
-    <div class="top-bar">
-      <button @click="goBack" class="back-button">
-        <span class="material-icons">arrow_back</span> Înapoi
+  <div class="flex flex-col items-center min-h-screen bg-black">
+    <!-- Top Bar -->
+    <div class="flex items-center justify-between w-full bg-gray-800 p-4 text-white fixed top-0 left-0 z-10">
+      <button @click="goBack" class="flex items-center text-lg text-white">
+        <span class="material-icons mr-2">arrow_back</span> Înapoi
       </button>
-      <h1 class="title">Setări</h1>
+      <h1 class="text-xl font-bold text-center flex-1 md:text-center sm:text-left">
+        Setări
+      </h1>
     </div>
-    <div class="settings-list-container">
-      <ul class="settings-list">
-        <li @click="handleMenuAction('changePassword')">Schimbă Parola</li>
-        <li @click="handleMenuAction('editProfile')">Editează Profilul</li>
-        <li @click="handleMenuAction('changeProfileImage')">Schimbă Imaginea de Profil</li>
-        <li @click="handleMenuAction('logout')">Iesire</li>
+
+    <!-- Settings List Container -->
+    <div class="flex flex-col items-center justify-center pt-24 w-full">
+      <ul class="space-y-4">
+        <li @click="handleMenuAction('changePassword')" class="text-xl text-white cursor-pointer hover:bg-green-500 px-4 py-2 rounded transition duration-300">
+          Schimbă Parola
+        </li>
+        <li @click="handleMenuAction('editProfile')"
+            class="text-xl text-white cursor-pointer hover:bg-green-500 px-4 py-2 rounded transition duration-300">
+          Editează Profilul
+        </li>
+        <li @click="handleMenuAction('logout')"
+            class="text-xl text-white cursor-pointer hover:bg-green-500 px-4 py-2 rounded transition duration-300">
+          Iesire
+        </li>
       </ul>
     </div>
   </div>
@@ -30,10 +42,7 @@ export default {
           router.push("/change-password");
           break;
         case "editProfile":
-          router.push('/edit-profile')
-          break;
-        case "changeProfileImage":
-          router.push('/change-profile-image');
+          router.push('/edit-profile');
           break;
         case "logout":
           router.push("/auth");
@@ -55,83 +64,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
-
-.container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  flex-direction: column;
-}
-
-.top-bar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  background-color: #1a1a1a;
-  padding: 10px 20px;
-  color: white;
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 1000;
-}
-
-.title {
-  font-size: 1.5rem;
-  font-weight: bold;
-  text-align: center;
-  flex-grow: 1;
-}
-
-
-.back-button {
-  background: none;
-  border: none;
-  color: white;
-  font-size: 1.5rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-}
-
-.back-button .material-icons {
-  margin-right: 8px;
-}
-
-.settings-list-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  gap: 1rem;
-  padding-top: 0;
-  width: 100%;
-}
-
-.settings-list {
-  list-style: none;
-  padding: 0;
-  color: white;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.settings-list li {
-  font-size: 1.5rem;
-  padding: 0.5rem;
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
-
-.settings-list li:hover {
-  background: #1ae11a;
-  color: white;
-}
-</style>

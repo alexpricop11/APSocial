@@ -9,6 +9,9 @@ from database.config import DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASS
 
 from database.database import Base
 from users import models
+from posts.images import models
+from posts.comments import models
+from posts.likes import models
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
