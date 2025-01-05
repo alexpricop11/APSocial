@@ -1,11 +1,43 @@
+<template>
+  <div>
+    <div class="mb-5 flex flex-col items-start gap-2">
+      <input
+          type="file"
+          @change="handleFileSelect"
+          accept="image/*"
+          class="hidden"
+          ref="fileInput"
+          multiple
+      />
+      <button
+          @click="handleUploadButtonClick"
+          class="bg-blue-500 text-white px-4 py-2 p-5 rounded-lg hover:bg-blue-600 transition-colors"
+      >
+        Încarcă imagini in profil
+      </button>
+    </div>
+    <div class="flex flex-wrap gap-4 pb-20 justify-center items-center min-h-screen">
+      <div v-for="post in posts" :key="post.id"
+           class="w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 lg:w-40 lg:h-40 overflow-hidden rounded-lg border border-gray-300"
+      >
+        <img
+            :src="getImageUrl(post.image)"
+            alt="Gallery Image"
+            class="w-full h-full object-cover"
+        />
+      </div>
+    </div>
+  </div>
+</template>
+
 <script>
 import apiClient from "@/services/api.js";
 
 export default {
   data() {
     return {
-      selectedFile: null,
-      posts: []
+      selectedFiles: [],
+      posts: [],
     };
   },
   created() {
@@ -14,22 +46,33 @@ export default {
   methods: {
     async getPosts() {
       try {
-        const posts = await apiClient.get('/posts');
-        this.posts = posts.data;
+        const response = await apiClient.get('/get-posts');
+        console.log("Postări încărcate:", response.data);
+        this.posts = response.data;
       } catch (error) {
         console.error(error);
       }
     },
     handleFileSelect(event) {
-      this.selectedFile = event.target.files[0];
+      const files = event.target.files;
+      if (files.length > 0) {
+        for (const file of files) {
+          if (file.type.startsWith('image/')) {
+            this.uploadImage(file);
+          } else {
+            alert("Te rugăm să selectezi doar fișiere de tip imagine.");
+          }
+        }
+      } else {
+        alert("Te rugăm să selectezi cel puțin un fișier.");
+      }
     },
-
-    // Încarcă imaginea către backend
-    async uploadImage() {
-      if (!this.selectedFile) return;
-
+    handleUploadButtonClick() {
+      this.$refs.fileInput.click();
+    },
+    async uploadImage(file) {
       const formData = new FormData();
-      formData.append("image", this.selectedFile);
+      formData.append("image", file);
 
       try {
         const response = await apiClient.post("/create-post", formData, {
@@ -37,61 +80,16 @@ export default {
             "Content-Type": "multipart/form-data",
           },
         });
-        this.posts.push(response.data); // Adaugă noua postare în listă
-        this.selectedFile = null;
+        this.posts.push(response.data);
+        await this.getPosts();
       } catch (error) {
-        console.error("Failed to upload image:", error);
+        alert("Încărcarea imaginii a eșuat. Te rugăm să încerci din nou.");
       }
     },
     getImageUrl(imagePath) {
-      return `http://127.0.0.1:8000/${imagePath}`;
+      const baseUrl = "http://127.0.0.1:8000/static/";
+      return `${baseUrl}${imagePath.split('/')[1]}`;
     },
-  }
-}
+  },
+};
 </script>
-
-<template>
-  <div>
-    <!-- Formular pentru încărcarea imaginilor -->
-    <div class="upload-section">
-      <input type="file" @change="handleFileSelect" accept="image/*"/>
-      <button @click="uploadImage" :disabled="!selectedFile">Încarcă imaginea</button>
-    </div>
-
-    <!-- Afișarea imaginilor încărcate -->
-    <div class="gallery">
-      <div v-for="post in posts" :key="post.id" class="gallery-item">
-        <img :src="getImageUrl(post.image)" alt="Gallery Image" class="gallery-image"/>
-      </div>
-    </div>
-  </div>
-</template>
-
-<style scoped>
-.upload-section {
-  margin-bottom: 20px;
-  color: white;
-}
-
-.gallery {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.gallery-item {
-  position: relative;
-  width: 150px;
-  height: 150px;
-  overflow: hidden;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-}
-
-.gallery-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-</style>

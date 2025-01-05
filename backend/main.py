@@ -3,7 +3,8 @@ from fastapi import FastAPI
 from starlette.staticfiles import StaticFiles
 
 from password_service.routes import password
-from posts.images.routes import posts
+from posts.comments.routes import comment
+from posts.images.routes import post
 from users.auth.routes import auth
 from users.profile.routes import user
 
@@ -20,8 +21,9 @@ app.add_middleware(
 )
 app.include_router(auth)
 app.include_router(user)
+app.include_router(post)
 app.include_router(password)
-app.include_router(posts)
+app.include_router(comment)
 app.mount("/static", StaticFiles(directory="uploads"), name="static")
 
 if __name__ == '__main__':

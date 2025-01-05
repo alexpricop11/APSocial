@@ -21,7 +21,7 @@
     <!-- Settings Icon Section -->
     <div class="flex top-10 right-4 cursor-pointer">
       <router-link to="/settings">
-        <span class="material-icons text-xl text-white">settings</span>
+        <span class="material-icons text-3xl text-white">settings</span>
       </router-link>
     </div>
 
@@ -35,10 +35,10 @@
         />
       </div>
     </div>
-    <div class="">
+  </div>
+    <div>
       <Posts/>
     </div>
-  </div>
 </template>
 
 <script>
