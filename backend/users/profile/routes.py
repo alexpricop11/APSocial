@@ -5,7 +5,8 @@ from database.database import get_db
 from users.auth.jwt import get_current_user
 from users.models import User
 from users.profile.schemas import EditProfile
-from users.profile.services import UserProfileServices
+from users.profile.services.profile_image_services import ProfileImageServices
+from users.profile.services.profile_services import UserProfileServices
 
 user = APIRouter(tags=['profile'])
 
@@ -43,5 +44,14 @@ async def update_profile_image(
 ):
     if not image.content_type.startswith('image/'):
         raise HTTPException(status_code=400, detail="File must be an image")
-    service = UserProfileServices(db)
+    service = ProfileImageServices(db)
     return await service.update_profile_image(current_user.id, image)
+
+
+@user.delete("/user/profile/image")
+async def delete_profile_image(
+        current_user: User = Depends(get_current_user),
+        db: AsyncSession = Depends(get_db)
+):
+    service = ProfileImageServices(db)
+    return await service.delete_profile_image(current_user.id)

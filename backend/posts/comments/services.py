@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from fastapi import HTTPException
 from sqlalchemy import delete, update
 from sqlalchemy.future import select
@@ -11,23 +13,23 @@ class CommentService:
     def __init__(self, db: AsyncSession):
         self.db = db
 
-    async def create_comment(self, comment: CreateComment):
+    async def create_comment(self, comment: CreateComment, user: UUID, post_id: int):
         new_comment = Comment(
-            **comment.dict()
+            user=user,
+            post_id=post_id,
+            text=comment.text
         )
         self.db.add(new_comment)
         await self.db.commit()
         await self.db.refresh(new_comment)
-        if new_comment:
-            return {"message": 'The comment created successfully'}
-        return HTTPException(status_code=400, detail="Error created comment")
+        return new_comment
 
     async def get_comment_by_post_id(self, post_id):
         query = select(Comment).where(post_id == Comment.post_id)
         result = await self.db.execute(query)
         comments = result.scalars().all()
         if not comments:
-            raise HTTPException(status_code=404, detail="No comments for this posts")
+            raise HTTPException(status_code=404, detail="No comments for this post")
         return {
             'comments': comments,
             "num_comments": len(comments)
@@ -58,4 +60,4 @@ class CommentService:
         await self.db.execute(update_query)
         await self.db.commit()
         await self.db.refresh(comment)
-        return {"message": "Comment updated successfully", "comment": comment}
+        return comment

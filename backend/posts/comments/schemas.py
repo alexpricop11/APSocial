@@ -5,18 +5,18 @@ from pydantic import BaseModel
 
 
 class CreateComment(BaseModel):
+    user: UUID
+    post_id: int
     text: str
+    created_at: datetime
 
 
 class EditComment(CreateComment):
-    text: str
+    pass
 
 
 class CommentBase(CreateComment):
     id: int
-    user: UUID
-    post_id: int
-    created_at: datetime
 
     class Config:
         from_attributes = True
