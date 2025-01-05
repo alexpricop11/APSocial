@@ -5,6 +5,8 @@ from starlette.staticfiles import StaticFiles
 from password_service.routes import password
 from posts.comments.routes import comment
 from posts.images.routes import post
+from posts.likes.routes import like
+from search.routes import search
 from users.auth.routes import auth
 from users.profile.routes import user
 
@@ -24,6 +26,8 @@ app.include_router(user)
 app.include_router(post)
 app.include_router(password)
 app.include_router(comment)
+app.include_router(like)
+app.include_router(search)
 app.mount("/static", StaticFiles(directory="uploads"), name="static")
 
 if __name__ == '__main__':
