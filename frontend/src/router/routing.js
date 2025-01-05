@@ -1,8 +1,8 @@
 import {createRouter, createWebHistory} from 'vue-router';
 import AuthPage from "@/views/AuthPage.vue";
 import HomeView from "@/views/HomeView.vue";
-import HomePage from "@/components/Home/HomePage.vue";
-import Profile from "@/components/Profile/Profile.vue";
+import HomePage from "@/views/HomePage.vue";
+import Profile from "@/views/Profile.vue";
 import Search from "@/components/Search.vue";
 import Chat from "@/components/Chat.vue";
 import Notifications from "@/components/Notifications.vue";
@@ -53,4 +53,5 @@ router.beforeEach((to, from, next) => {
         }
     }
 });
+
 export default router;

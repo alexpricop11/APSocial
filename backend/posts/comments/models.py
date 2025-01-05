@@ -12,5 +12,4 @@ class Comment(Base):
     post_id = Column(ForeignKey('Posts.id'), nullable=False)
     text = Column(Text, nullable=False)
     created_at = Column(DateTime, nullable=False)
-    post = relationship("Post", back_populates="comments")
 

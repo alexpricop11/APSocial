@@ -11,13 +11,21 @@ user = APIRouter(tags=['profile'])
 
 
 @user.get("/profile")
-async def get_profile(current_user: User = Depends(get_current_user),
-                      db: AsyncSession = Depends(get_db)):
+async def get_profile(
+        current_user: dict | User = Depends(get_current_user),
+        db: AsyncSession = Depends(get_db)
+):
     profile_service = UserProfileServices(db)
-    return await profile_service.get_user_profile(current_user.id)
+    if isinstance(current_user, dict) and "new_token" in current_user:
+        users = current_user["user"]
+        new_token = current_user["new_token"]
+        profile = await profile_service.get_user_profile(users.id)
+        return {"profile": profile, "new_token": new_token}
+    else:
+        profile = await profile_service.get_user_profile(current_user.id)
+        return {"profile": profile}
 
 
-# TODO sa se rezolve problema cu schimbarea imaginii de profil
 @user.post('/edit-profile')
 async def edit_profile(
         profile_data: EditProfile,
@@ -27,15 +35,13 @@ async def edit_profile(
     return await profile_service.edit_profile(current_user.id, profile_data)
 
 
-# TODO sa se rezolve problema cu schimbarea imaginii de profil
 @user.post("/user/profile/image")
 async def update_profile_image(
         image: UploadFile = File(...),
         current_user: User = Depends(get_current_user),
         db: AsyncSession = Depends(get_db)
 ):
-    if not image.content_type.startswith('images/'):
-        raise HTTPException(status_code=400, detail="File must be an images")
-
+    if not image.content_type.startswith('image/'):
+        raise HTTPException(status_code=400, detail="File must be an image")
     service = UserProfileServices(db)
     return await service.update_profile_image(current_user.id, image)

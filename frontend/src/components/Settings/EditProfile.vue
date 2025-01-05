@@ -8,7 +8,6 @@
     </div>
     <div class="edit-profile-container">
       <form @submit.prevent="editProfile">
-        <!-- Schimbare imagine profil -->
         <div class="profile-image-container">
           <div class="image-preview" v-if="imagePreview || profileData.currentImage">
             <img :src="imagePreview || profileData.currentImage" alt="Profile" class="preview-img"/>
@@ -52,7 +51,6 @@
 </template>
 
 <script>
-import {ref} from "vue";
 import apiClient from "@/services/api.js";
 import router from "@/router/routing.js";
 
@@ -123,7 +121,7 @@ export default {
         // Handle image upload separately
         if (this.selectedFile) {
           const imageFormData = new FormData();
-          imageFormData.append("file", this.selectedFile);
+          imageFormData.append("image", this.selectedFile); // Schimbă "file" în "image"
 
           await apiClient.post("/user/profile/image", imageFormData, {
             headers: {
@@ -133,15 +131,17 @@ export default {
         }
 
         this.successMessage = "Profilul a fost actualizat cu succes!";
-        await this.fetchProfileData(); // Refresh profile data
+        await this.fetchProfileData();
+        await router.push('/profile')
       } catch (error) {
         this.errorMessage = "A apărut o eroare. Te rugăm să încerci din nou.";
+        console.error(error);
       }
     },
+    goBack() {
+      router.back();
+    }
   },
-  goBack() {
-    router.back();
-  }
 }
 </script>
 
@@ -229,7 +229,7 @@ input[type="date"] {
   width: 90%;
   padding: 12px 15px;
   margin-bottom: 15px;
-  border: 1px solid #ddd;
+  color: #070606;
   border-radius: 8px;
   font-size: 1rem;
   transition: all 0.3s ease;

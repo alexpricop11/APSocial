@@ -3,7 +3,6 @@ from uuid import uuid4
 
 from sqlalchemy import Column, String, DateTime, Date, Text
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import relationship
 
 from database.database import Base
 

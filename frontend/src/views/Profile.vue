@@ -35,11 +35,15 @@
         />
       </div>
     </div>
+    <div class="">
+      <Posts/>
+    </div>
   </div>
 </template>
 
 <script>
 import apiClient from "@/services/api.js";
+import Posts from "@/components/Profile/Posts.vue";
 
 export default {
   data() {
@@ -48,6 +52,9 @@ export default {
       showModal: false,
     };
   },
+  components: {
+    Posts
+  },
   created() {
     this.getProfile();
   },
@@ -55,7 +62,7 @@ export default {
     async getProfile() {
       try {
         const response = await apiClient.get('/profile');
-        this.profile = response.data;
+        this.profile = response.data.profile;
       } catch (error) {
         console.error(error);
       }

@@ -11,4 +11,3 @@ class Post(Base):
     user = Column(UUID(as_uuid=True), ForeignKey('Users.id'), nullable=False)
     image = Column(String, nullable=False)
     uploaded_at = Column(DateTime, nullable=False)
-    comments = relationship("Comment", back_populates="post")

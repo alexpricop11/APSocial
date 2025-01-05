@@ -5,7 +5,6 @@ from sqlalchemy.future import select
 from database.database import AsyncSession
 from uuid import uuid4
 from passlib.context import CryptContext
-
 from users.auth.jwt import create_access_token
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -16,7 +15,7 @@ class AuthServices:
         self.db = db
 
     async def existing_user(self, username: str):
-        query = select(User).where(username == User.username)
+        query = select(User).where(User.username == username)
         result = await self.db.execute(query)
         user = result.scalar_one_or_none()
         return user
@@ -49,9 +48,8 @@ class AuthServices:
             raise HTTPException(status_code=500, detail=f"Failed to register user: {str(ex)}")
 
     async def login(self, user: LoginUser):
-        query = select(User).where(user.username == User.username)
+        query = select(User).where(User.username == user.username)
         result = await self.db.execute(query)
-
         db_user = result.scalar_one_or_none()
 
         if db_user is None or not pwd_context.verify(user.password, db_user.password):
