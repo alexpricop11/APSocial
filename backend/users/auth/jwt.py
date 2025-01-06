@@ -42,7 +42,7 @@ async def get_current_user(
         if username is None:
             raise HTTPException(status_code=401, detail="Token does not contain username")
 
-        query = select(User).where(User.username == username)
+        query = select(User).where(username == User.username)
         result = await db.execute(query)
         user = result.scalar_one_or_none()
         if user is None:

@@ -1,13 +1,13 @@
 from datetime import datetime
 from uuid import uuid4
 
-from sqlalchemy import Column, String, DateTime, Date, Text, ForeignKey, Integer
+from sqlalchemy import Column, String, DateTime, Date, Text, Integer
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
 from database.database import Base
 from follow.models import Follow
-from posts.posts.models import Post, post_likes
+from posts.posts.models import post_likes
 
 
 class User(Base):

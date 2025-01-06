@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 
+from follow.routes import follows
 from password_service.routes import password
 from posts.comments.routes import comment
 from posts.posts.routes import post
@@ -17,3 +18,4 @@ router.include_router(password)
 router.include_router(comment)
 # router.include_router(like)
 router.include_router(search)
+router.include_router(follows)

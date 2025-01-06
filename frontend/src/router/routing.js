@@ -11,6 +11,7 @@ import ChangePassword from "@/components/Settings/ChangePassword.vue";
 import EditProfile from "@/components/Settings/EditProfile.vue";
 import ResetPassword from "@/components/Auth/ResetPassword.vue";
 import ConfirmResetPassword from "@/components/Auth/ConfirmResetPassword.vue";
+import OtherProfile from "@/views/OtherProfile.vue";
 
 const router = createRouter({
     history: createWebHistory(),
@@ -30,6 +31,11 @@ const router = createRouter({
         {path: '/settings', component: Settings},
         {path: '/change-password', component: ChangePassword},
         {path: '/edit-profile', component: EditProfile},
+        {
+            path: '/profile/:id',
+            name: "Profile",
+            component: OtherProfile
+        },
     ]
 });
 

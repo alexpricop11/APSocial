@@ -29,6 +29,7 @@ class OtherUserProfile(BaseModel):
     followers_count: int
     following_count: int
     created_at: datetime
+    is_following: Optional[bool] = None
 
     class Config:
         from_attributes = True

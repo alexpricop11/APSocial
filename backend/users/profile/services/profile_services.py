@@ -19,7 +19,7 @@ class UserProfileServices:
         return UserProfile.from_orm(user)
 
     async def get_other_profile(self, user_id: UUID) -> OtherUserProfile:
-        query = select(User).where(user_id=User.id)
+        query = select(User).where(user_id == User.id)
         result = await self.db.execute(query)
         user = result.scalar_one_or_none()
         if user is None:

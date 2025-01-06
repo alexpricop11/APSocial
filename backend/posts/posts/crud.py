@@ -19,7 +19,7 @@ async def create_posts(db: AsyncSession, image: PostCreate) -> Post:
             shutil.copyfileobj(image.image.file, buffer)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to save image: {str(e)}")
-    post = Post(image=file_location, user=image.user_id, uploaded_at=image.uploaded_at)
+    post = Post(image=file_location, author_id=image.user_id, uploaded_at=image.uploaded_at)
     db.add(post)
     await db.commit()
     await db.refresh(post)
@@ -29,14 +29,14 @@ async def create_posts(db: AsyncSession, image: PostCreate) -> Post:
 async def get_posts_by_id(db: AsyncSession, user_id: UUID):
     result = await db.execute(
         select(Post)
-        .filter(user_id == Post.user)
+        .filter(user_id == Post.author_id)
         .order_by(desc(Post.uploaded_at)))
     posts = result.scalars().all()
     return posts
 
 
 async def delete_image(db: AsyncSession, user, image_id: int) -> bool:
-    result = await db.execute(select(Post).filter(image_id == Post.id, user.id == Post.user))
+    result = await db.execute(select(Post).filter(image_id == Post.id, user.id == Post.author_id))
     post = result.scalar_one_or_none()
     if post:
         if os.path.exists(post.image):
