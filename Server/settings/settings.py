@@ -57,7 +57,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
-    'django_filters',
     'channels',
     'users',
     'chat',
@@ -142,10 +141,6 @@ LOGGING = {
         },
     },
 }
-
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-]
 
 AUTH_USER_MODEL = 'users.Users'
 
