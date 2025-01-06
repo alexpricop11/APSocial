@@ -5,8 +5,8 @@ from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
-from posts.images.crud import create_posts, get_posts_by_id, delete_image
-from posts.images.schemas import PostCreate, PostInDB
+from posts.posts.crud import create_posts, get_posts_by_id, delete_image
+from posts.posts.schemas import PostCreate, PostInDB
 from users.auth.jwt import get_current_user
 from users.models import User
 

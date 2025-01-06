@@ -15,7 +15,7 @@ class CommentService:
 
     async def create_comment(self, comment: CreateComment, user: UUID, post_id: int):
         new_comment = Comment(
-            user=user,
+            user_id=user,
             post_id=post_id,
             text=comment.text
         )

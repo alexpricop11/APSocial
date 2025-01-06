@@ -1,15 +1,7 @@
 import uvicorn
 from fastapi import FastAPI
 from starlette.staticfiles import StaticFiles
-
-from password_service.routes import password
-from posts.comments.routes import comment
-from posts.images.routes import post
-from posts.likes.routes import like
-from search.routes import search
-from users.auth.routes import auth
-from users.profile.routes import user
-
+from api import router
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -21,13 +13,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-app.include_router(auth)
-app.include_router(user)
-app.include_router(post)
-app.include_router(password)
-app.include_router(comment)
-app.include_router(like)
-app.include_router(search)
+
+app.include_router(router)
 app.mount("/static", StaticFiles(directory="uploads"), name="static")
 
 if __name__ == '__main__':

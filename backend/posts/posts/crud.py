@@ -6,8 +6,8 @@ from fastapi import HTTPException
 from sqlalchemy import desc
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from posts.images.models import Post
-from posts.images.schemas import PostCreate
+from posts.posts.models import Post
+from posts.posts.schemas import PostCreate
 
 
 async def create_posts(db: AsyncSession, image: PostCreate) -> Post:

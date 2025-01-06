@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -25,6 +27,19 @@ async def get_profile(
     else:
         profile = await profile_service.get_user_profile(current_user.id)
         return {"profile": profile}
+
+
+@user.get('/profile/{user_id}')
+async def get_other_user_profile(
+        user_id: UUID,
+        db: AsyncSession = Depends(get_db)
+):
+    profile_service = UserProfileServices(db)
+    try:
+        profile = await profile_service.get_other_profile(user_id)
+        return profile
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to fetch profile: {str(e)}")
 
 
 @user.post('/edit-profile')
