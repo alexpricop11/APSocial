@@ -1,26 +1,37 @@
 <template>
-  <form @submit.prevent="registerUser">
-    <div class="form-group">
-      <input type="text" v-model="form.username" placeholder="Numele" required>
+  <form @submit.prevent="registerUser" class="space-y-4">
+    <div class="relative">
+      <input type="text" v-model="form.username" placeholder="Numele" required
+             class="w-full p-3 bg-gray-900 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:border-gray-500">
     </div>
 
-    <div class="form-group password-group">
-      <input :type="showPassword ? 'text' : 'password'" v-model="form.password" placeholder="Parola" required>
-      <button type="button" class="eye-button" @click="showPassword = !showPassword">👁</button>
+    <div class="relative">
+      <input :type="showPassword ? 'text' : 'password'" v-model="form.password" placeholder="Parola" required
+             class="w-full p-3 bg-gray-900 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:border-gray-500">
+      <button type="button" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-white"
+              @click="showPassword = !showPassword">
+        <i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+      </button>
     </div>
-    <div class="form-group">
-      <input type="email" v-model="form.email" placeholder="Email">
-    </div>
-
-    <div class="form-group">
-      <input type="tel" v-model="form.phone" placeholder="Numărul de telefon">
-    </div>
-
-    <div class="form-group">
-      <input type="date" v-model="form.birthday">
+    <div class="relative">
+      <input type="email" v-model="form.email" placeholder="Email"
+             class="w-full p-3 bg-gray-900 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:border-gray-500">
     </div>
 
-    <button type="submit" class="submit-button">Înregistrează-te</button>
+    <div class="relative">
+      <input type="tel" v-model="form.phone" placeholder="Numărul de telefon"
+             class="w-full p-3 bg-gray-900 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:border-gray-500">
+    </div>
+
+    <div class="relative">
+      <input type="date" v-model="form.birthday"
+             class="w-full p-3 bg-gray-900 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:border-gray-500">
+    </div>
+
+    <button type="submit"
+            class="w-full p-3 bg-green-500 rounded-md text-white font-semibold hover:bg-green-600 transition-colors">
+      Înregistrează-te
+    </button>
   </form>
 </template>
 
@@ -61,59 +72,4 @@ const registerUser = async () => {
 </script>
 
 <style scoped>
-.form-group {
-  margin-bottom: 1rem;
-  max-width: 95%;
-  position: relative;
-}
-
-input {
-  width: 100%;
-  padding: 0.75rem;
-  background-color: #111827;
-  border: 1px solid #4B5563;
-  border-radius: 0.375rem;
-  color: white;
-  font-size: 1rem;
-}
-
-input::placeholder {
-  color: #9CA3AF;
-}
-
-input:focus {
-  outline: none;
-  border-color: #6B7280;
-}
-
-.password-group {
-  position: relative;
-}
-
-.eye-button {
-  position: absolute;
-  right: 0.75rem;
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  color: #ffffff;
-  cursor: pointer;
-  padding: 0;
-  font-size: 1.2rem;
-}
-
-.submit-button {
-  width: 100%;
-  padding: 0.75rem;
-  background-color: #1ae11a;
-  border: none;
-  border-radius: 0.375rem;
-  color: white;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
 </style>
-

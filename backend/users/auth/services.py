@@ -15,7 +15,7 @@ class AuthServices:
         self.db = db
 
     async def existing_user(self, username: str):
-        query = select(User).where(User.username == username)
+        query = select(User).where(username == User.username)
         result = await self.db.execute(query)
         user = result.scalar_one_or_none()
         return user
@@ -42,13 +42,12 @@ class AuthServices:
             return {
                 "message": "User registered successfully",
                 "token": access_token,
-                "user_id": new_user.id
             }
         except Exception as ex:
             raise HTTPException(status_code=500, detail=f"Failed to register user: {str(ex)}")
 
     async def login(self, user: LoginUser):
-        query = select(User).where(User.username == user.username)
+        query = select(User).where(user.username == User.username)
         result = await self.db.execute(query)
         db_user = result.scalar_one_or_none()
 
