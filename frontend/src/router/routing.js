@@ -1,6 +1,5 @@
 import {createRouter, createWebHistory} from 'vue-router';
 import AuthPage from "@/views/AuthPage.vue";
-import HomeView from "@/views/HomeView.vue";
 import HomePage from "@/views/HomePage.vue";
 import Profile from "@/views/Profile.vue";
 import Search from "@/views/Search.vue";
@@ -16,18 +15,14 @@ import OtherProfile from "@/views/OtherProfile.vue";
 const router = createRouter({
     history: createWebHistory(),
     routes: [
-        {path: '/auth', component: AuthPage},
-        {path: '/reset-password', component: ResetPassword},
-        {path: '/confirm-reset-password', component: ConfirmResetPassword},
-        {
-            path: '/', component: HomeView, children: [
-                {path: '', component: HomePage},
-                {path: 'search', component: Search},
-                {path: 'chat', component: Chat},
-                {path: 'notifications', component: Notifications},
-                {path: 'profile', component: Profile},
-            ]
-        },
+        {path: '/auth', component: AuthPage, meta: {noNavBar: true}},
+        {path: '/reset-password', component: ResetPassword, meta: {noNavBar: true}},
+        {path: '/confirm-reset-password', component: ConfirmResetPassword, meta: {noNavBar: true}},
+        {path: '/', component: HomePage},
+        {path: '/search', component: Search},
+        {path: '/chat', component: Chat},
+        {path: '/notifications', component: Notifications},
+        {path: '/profile', component: Profile},
         {path: '/settings', component: Settings},
         {path: '/change-password', component: ChangePassword},
         {path: '/edit-profile', component: EditProfile},
