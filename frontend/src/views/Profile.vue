@@ -29,6 +29,10 @@
     <!-- Followers and Following Section -->
     <div class="text-white flex space-x-4 mt-2">
       <div>
+        <span class="block text-lg font-bold text-center">{{ profile ? profile.posts_count : 0 }}</span>
+        <span class="text-sm">Postări</span>
+      </div>
+      <div>
         <span class="block text-lg font-bold text-center">{{ profile ? profile.followers_count : 0 }}</span>
         <span class="text-sm">Followers</span>
       </div>
@@ -52,7 +56,7 @@
 
     <!-- Posts Section -->
     <div class="mt-4 w-full">
-      <Posts/>
+      <Posts :profile="profile"/>
     </div>
   </div>
 </template>

@@ -1,15 +1,21 @@
 <template>
   <div class="p-4">
+    <!-- Navigation Bar -->
+    <div class="flex justify-between items-center mb-4">
+      <button @click="goBack" class="flex items-center px-4 py-2 text-white rounded">
+        <i class="fas fa-arrow-left mr-2"></i> Înapoi
+      </button>
+    </div>
     <!-- Loading State -->
     <div v-if="loading" class="text-center text-gray-500">
       <i class="fas fa-spinner fa-spin"></i> Se încarcă...
     </div>
 
     <!-- User Profile -->
-    <div v-else-if="user" class="mt-4">
-      <div class="flex flex-col items-center text-center">
-        <!-- Profile Image or Icon -->
-        <div class="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center mb-4">
+    <div v-else-if="user" class="mt-4 flex flex-col items-center text-center">
+      <div class="flex items-center justify-center w-full mb-4">
+        <!-- Profile Image -->
+        <div class="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center mr-4">
           <img
               v-if="user.profile_image"
               :src="user.profile_image"
@@ -19,30 +25,35 @@
           <i v-else class="fas fa-user text-6xl text-gray-500"></i>
         </div>
 
-        <!-- Username -->
-        <h1 class="text-3xl font-bold text-white">{{ user.username }}</h1>
-
-        <!-- Bio -->
-        <p v-if="user.bio" class="text-white mt-2">{{ user.bio }}</p>
-
-        <!-- Followers and Following -->
-        <div class="flex space-x-4 mt-4">
-          <div class="text-white">
-            <i class="fas fa-users"></i> Followers: {{ user.followers_count }}
+        <!-- Username and Follow/Unfollow Button -->
+        <div class="flex flex-col items-start">
+          <div class="flex items-center">
+            <h1 class="text-3xl font-bold text-white mr-4">{{ user.username }}</h1>
+            <button
+                @click="toggleFollow"
+                class="px-4 py-2 bg-blue-500 text-white rounded"
+            >
+              {{ isFollowing ? 'Ne urmărește' : 'Urmărește' }}
+            </button>
           </div>
-          <div class="text-white">
-            <i class="fas fa-user-friends"></i> Following: {{ user.following_count }}
+
+          <!-- Followers and Following -->
+          <div class="flex space-x-4 mt-2">
+            <div class="text-white">
+              <i></i> Postări: {{ user.posts_count }}
+            </div>
+            <div class="text-white">
+              <i class="fas fa-users"></i> Followers: {{ user.followers_count }}
+            </div>
+            <div class="text-white">
+              <i class="fas fa-user-friends"></i> Following: {{ user.following_count }}
+            </div>
           </div>
         </div>
-
-        <!-- Follow/Unfollow Button -->
-        <button
-            @click="toggleFollow"
-            class="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
-        >
-          {{ isFollowing ? 'Ne urmărește' : 'Urmărește' }}
-        </button>
       </div>
+
+      <!-- Bio -->
+      <p v-if="user.bio" class="text-white mt-4">{{ user.bio }}</p>
     </div>
 
     <div v-else class="text-center text-red-500">
@@ -52,9 +63,10 @@
 </template>
 
 <script>
-import {ref, onMounted} from "vue";
-import {useRoute} from "vue-router";
+import { ref, onMounted } from "vue";
+import { useRoute } from "vue-router";
 import apiClient from "@/services/api.js";
+import router from "@/router/routing.js";
 
 export default {
   setup() {
@@ -93,6 +105,10 @@ export default {
       }
     };
 
+    const goBack = () => {
+      router.back();
+    };
+
     onMounted(() => {
       fetchUserProfile();
     });
@@ -102,6 +118,7 @@ export default {
       loading,
       isFollowing,
       toggleFollow,
+      goBack,
     };
   },
 };

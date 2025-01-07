@@ -6,11 +6,10 @@
         <span class="material-icons">arrow_back</span>
         <span class="ml-2">Înapoi</span>
       </button>
-      <h1 class="text-xl font-bold text-center absolute left-1/2 transform -translate-x-1/2">Editează profilul</h1>
     </div>
 
     <!-- Edit Profile Form -->
-    <div class="mt-20 w-full max-w-md bg-gray-800 rounded-lg shadow-md p-6">
+    <div class="mt-12 w-full max-w-md bg-gray-800 rounded-lg shadow-md p-5 mb-20">
       <form @submit.prevent="editProfile">
         <!-- Profile Image -->
         <div class="text-center mb-6">
@@ -130,7 +129,7 @@ export default {
     async fetchProfileData() {
       try {
         const response = await apiClient.get("/profile");
-        this.profileData = response.data;
+        this.profileData = response.data.profile;
       } catch (error) {
         this.errorMessage = "Nu am putut încărca datele profilului.";
       }

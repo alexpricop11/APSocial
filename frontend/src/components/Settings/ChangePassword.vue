@@ -4,7 +4,6 @@
       <button @click="goBack" class="back-button">
         <span class="material-icons">arrow_back</span> Înapoi
       </button>
-      <h1 class="title">Resetează Parola</h1>
     </div>
 
     <form @submit.prevent="changePassword">

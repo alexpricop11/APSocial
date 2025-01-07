@@ -4,9 +4,9 @@ import NavBar from "@/components/nav_bar/NavBar.vue";
 
 <template>
   <div>
-    <NavBar />
-    <div class="home-content">
-      <router-view />
+    <NavBar/>
+    <div>
+      <router-view/>
     </div>
   </div>
 </template>

@@ -35,6 +35,6 @@ class User(Base):
     following = relationship(
         "Follow", foreign_keys=[Follow.follower_id], back_populates="follower"
     )
-
+    posts_count = Column(Integer, default=0)
     followers_count = Column(Integer, default=0)
     following_count = Column(Integer, default=0)

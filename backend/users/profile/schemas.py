@@ -12,6 +12,7 @@ class UserProfile(BaseModel):
     phone_number: Optional[str] = Field(None, pattern=r"^\+?\d{9,15}$")
     birthday: Optional[date] = None
     bio: Optional[str] = None
+    posts_count: int
     followers_count: int
     following_count: int
     created_at: datetime
@@ -26,6 +27,7 @@ class OtherUserProfile(BaseModel):
     profile_image: Optional[str] = None
     birthday: Optional[date] = None
     bio: Optional[str] = None
+    posts_count: int
     followers_count: int
     following_count: int
     created_at: datetime

@@ -34,6 +34,9 @@
 import apiClient from "@/services/api.js";
 
 export default {
+  props: {
+    profile: Object
+  },
   data() {
     return {
       selectedFiles: [],
@@ -80,7 +83,8 @@ export default {
             "Content-Type": "multipart/form-data",
           },
         });
-        this.posts.push(response.data);
+        this.posts.push(response.data.profile);
+        this.profile.posts_count += 1;
         await this.getPosts();
       } catch (error) {
         alert("Încărcarea imaginii a eșuat. Te rugăm să încerci din nou.");
